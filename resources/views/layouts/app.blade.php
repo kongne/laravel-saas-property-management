@@ -96,6 +96,14 @@
                         <i class="bi bi-tools me-2"></i>Maintenance
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('notifications.index') }}" class="nav-link text-white {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+                        <i class="bi bi-bell me-2"></i>Notifications
+                        @if(Auth::user()->unreadNotifications->count() > 0)
+                        <span class="badge bg-danger rounded-pill ms-auto">{{ Auth::user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
             </ul>
             <hr class="my-2">
             <div class="dropdown">
@@ -123,9 +131,19 @@
 
         <div class="flex-grow-1 main-content" @auth style="margin-left:0" @endauth>
             @auth
-            <nav class="bg-white shadow-sm px-4 py-2 d-flex align-items-center d-md-none sticky-top">
-                <button class="btn btn-link text-dark p-0 me-3" onclick="toggleSidebar()"><i class="bi bi-list fs-4"></i></button>
-                <span class="fw-semibold">{{ config('app.name') }}</span>
+            <nav class="bg-white shadow-sm px-4 py-2 d-flex align-items-center justify-content-between d-md-none sticky-top">
+                <div>
+                    <button class="btn btn-link text-dark p-0 me-3" onclick="toggleSidebar()"><i class="bi bi-list fs-4"></i></button>
+                    <span class="fw-semibold">{{ config('app.name') }}</span>
+                </div>
+                <a href="{{ route('notifications.index') }}" class="text-dark position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    @if(Auth::user()->unreadNotifications->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">
+                        {{ Auth::user()->unreadNotifications->count() }}
+                    </span>
+                    @endif
+                </a>
             </nav>
             @endauth
 

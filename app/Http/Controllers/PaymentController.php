@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Lease;
 use App\Models\Payment;
-use App\Models\Unit;
+use App\Notifications\PaymentReceiptNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,10 +83,10 @@ class PaymentController extends Controller
         $lease = Lease::findOrFail($request->lease_id);
         $data['balance'] = ($data['amount'] + ($data['late_fee'] ?? 0)) - ($data['paid_amount'] ?? 0);
 
-        if ($data['balance'] <= 0 && $data['paid_amount'] > 0) {
+        if ($data['balance'] <= 0 && ($data['paid_amount'] ?? 0) > 0) {
             $data['status'] = 'paid';
             $data['paid_date'] = $data['paid_date'] ?? now();
-        } elseif ($data['paid_amount'] && $data['paid_amount'] > 0) {
+        } elseif (($data['paid_amount'] ?? 0) > 0) {
             $data['status'] = 'partial';
         }
 
@@ -124,10 +124,10 @@ class PaymentController extends Controller
         $data = $request->validated();
         $data['balance'] = ($data['amount'] + ($data['late_fee'] ?? 0)) - ($data['paid_amount'] ?? 0);
 
-        if ($data['balance'] <= 0 && $data['paid_amount'] > 0) {
+        if ($data['balance'] <= 0 && ($data['paid_amount'] ?? 0) > 0) {
             $data['status'] = 'paid';
             $data['paid_date'] = $data['paid_date'] ?? now();
-        } elseif ($data['paid_amount'] && $data['paid_amount'] > 0) {
+        } elseif (($data['paid_amount'] ?? 0) > 0) {
             $data['status'] = 'partial';
         }
 
@@ -163,6 +163,11 @@ class PaymentController extends Controller
         );
 
         $payment->update(['mobile_money_number' => $request->mobile_money_number]);
+
+        $payment->load('tenant.user');
+        if ($payment->tenant?->user) {
+            $payment->tenant->user->notify(new PaymentReceiptNotification($payment));
+        }
 
         return back()->with('success', 'Payment marked as paid.');
     }

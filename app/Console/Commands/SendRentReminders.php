@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Lease;
 use App\Models\Payment;
+use App\Notifications\RentReminderNotification;
 use Illuminate\Console\Command;
 
 class SendRentReminders extends Command
@@ -27,7 +28,7 @@ class SendRentReminders extends Command
                 ->first();
 
             if (!$existingPayment) {
-                Payment::create([
+                $payment = Payment::create([
                     'lease_id' => $lease->id,
                     'tenant_id' => $lease->tenant_id,
                     'unit_id' => $lease->unit_id,
@@ -37,7 +38,11 @@ class SendRentReminders extends Command
                     'status' => 'pending',
                 ]);
 
-                $this->info("Payment created for lease #{$lease->id}");
+                if ($lease->tenant?->user) {
+                    $lease->tenant->user->notify(new RentReminderNotification($payment, $lease));
+                }
+
+                $this->info("Payment created and reminder sent for lease #{$lease->id}");
             }
         }
 

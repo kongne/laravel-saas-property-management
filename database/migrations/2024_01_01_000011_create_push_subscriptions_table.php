@@ -18,7 +18,9 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->timestamps();
 
-            $table->index([\DB::raw('endpoint(191)')], 'endpoint_index');
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->index([\DB::raw('endpoint(191)')], 'endpoint_index');
+            }
         });
     }
 

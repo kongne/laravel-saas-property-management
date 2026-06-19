@@ -94,6 +94,35 @@
 </div>
 @endif
 
+<div class="row g-4 mt-2">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Recent Notifications</h5>
+                <a href="{{ route('notifications.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                @php $recentNotifications = Auth::user()->notifications()->latest()->take(5)->get(); @endphp
+                @if($recentNotifications->count())
+                <div class="list-group list-group-flush">
+                    @foreach($recentNotifications as $notification)
+                    <div class="list-group-item px-0 {{ $notification->read_at ? '' : 'fw-semibold' }}">
+                        <div class="d-flex justify-content-between">
+                            <small>{{ $notification->data['title'] ?? 'Notification' }}</small>
+                            <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                        </div>
+                        <small class="text-muted">{{ $notification->data['message'] ?? '' }}</small>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-muted mb-0">No notifications yet.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
 @if($user->isTenantUser() && isset($stats['my_unit']))
 <div class="row g-4">
     <div class="col-md-6">

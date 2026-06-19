@@ -50,6 +50,7 @@
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label for="password" class="form-label fw-medium small text-uppercase text-muted mb-0">Password</label>
+                                    <a href="{{ route('password.request') }}" class="small text-decoration-none">Forgot?</a>
                                 </div>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror mt-1" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
                                 @error('password')

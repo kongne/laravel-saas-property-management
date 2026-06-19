@@ -9,7 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE payments MODIFY COLUMN payment_method ENUM('cash','check','bank_transfer','credit_card','mobile_money','orange_money','mtn_money','other') DEFAULT NULL");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE payments MODIFY COLUMN payment_method ENUM('cash','check','bank_transfer','credit_card','mobile_money','orange_money','mtn_money','other') DEFAULT NULL");
+        }
 
         Schema::table('payments', function (Blueprint $table) {
             $table->string('mobile_money_number', 30)->nullable()->after('payment_method');
@@ -22,6 +24,8 @@ return new class extends Migration
             $table->dropColumn('mobile_money_number');
         });
 
-        DB::statement("ALTER TABLE payments MODIFY COLUMN payment_method ENUM('cash','check','bank_transfer','credit_card','mobile_money','other') DEFAULT NULL");
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement("ALTER TABLE payments MODIFY COLUMN payment_method ENUM('cash','check','bank_transfer','credit_card','mobile_money','other') DEFAULT NULL");
+        }
     }
 };

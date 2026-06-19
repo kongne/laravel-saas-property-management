@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMaintenanceRequest;
 use App\Models\MaintenanceRequest;
 use App\Models\Unit;
+use App\Notifications\MaintenanceUpdatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,7 +79,12 @@ class MaintenanceController extends Controller
         $data['user_id'] = $user->id;
         $data['requested_date'] = $data['requested_date'] ?? now();
 
-        MaintenanceRequest::create($data);
+        $request = MaintenanceRequest::create($data);
+
+        $request->load('unit.property.user', 'tenant.user');
+        if ($request->unit?->property?->user) {
+            $request->unit->property->user->notify(new MaintenanceUpdatedNotification($request, 'created'));
+        }
 
         return redirect()->route('maintenance.index')
             ->with('success', 'Maintenance request created successfully.');
@@ -134,6 +140,11 @@ class MaintenanceController extends Controller
 
         $maintenanceRequest->resolve($request->resolution_notes, $request->cost);
 
+        $maintenanceRequest->load('tenant.user');
+        if ($maintenanceRequest->tenant?->user) {
+            $maintenanceRequest->tenant->user->notify(new MaintenanceUpdatedNotification($maintenanceRequest, 'resolved'));
+        }
+
         return back()->with('success', 'Maintenance request resolved.');
     }
 
@@ -148,6 +159,11 @@ class MaintenanceController extends Controller
             'assigned_to' => $request->assigned_to,
             'status' => 'in_progress',
         ]);
+
+        $maintenanceRequest->load('tenant.user');
+        if ($maintenanceRequest->tenant?->user) {
+            $maintenanceRequest->tenant->user->notify(new MaintenanceUpdatedNotification($maintenanceRequest, 'assigned'));
+        }
 
         return back()->with('success', 'Maintenance assigned successfully.');
     }

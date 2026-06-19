@@ -85,6 +85,11 @@
                         <i class="bi bi-file-text me-2"></i>Leases
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('users.index') }}" class="nav-link text-white {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                        <i class="bi bi-people-fill me-2"></i>Users
+                    </a>
+                </li>
                 @endif
                 <li>
                     <a href="{{ route('payments.index') }}" class="nav-link text-white {{ request()->routeIs('payments.*') ? 'active' : '' }}">

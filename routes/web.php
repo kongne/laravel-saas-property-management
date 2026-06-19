@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -80,6 +81,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/export/tenants', [ExportController::class, 'tenants'])->name('tenants.export');
 
             Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
+
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
+            Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::post('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
+            Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
 
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');

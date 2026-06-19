@@ -4,7 +4,7 @@
     "description":  "SaaS Property Management System",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.61",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "laravel/socialite": "^5.28",

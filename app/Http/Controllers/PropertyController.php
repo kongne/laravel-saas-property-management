@@ -12,17 +12,19 @@ class PropertyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Property::with('units');
+        $query = Property::withCount('units');
 
         if (!Auth::user()->isAdmin()) {
             $query->where('user_id', Auth::id());
         }
 
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('city', 'like', "%{$request->search}%")
-                  ->orWhere('address', 'like', "%{$request->search}%");
+        if ($search = $request->search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%")
+                  ->orWhere('district', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%")
+                  ->orWhere('type', 'like', "%{$search}%");
             });
         }
 
@@ -30,7 +32,23 @@ class PropertyController extends Controller
             $query->where('status', $request->status);
         }
 
-        $properties = $query->latest()->paginate(10);
+        if ($request->type) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->city) {
+            $query->where('city', $request->city);
+        }
+
+        if ($request->featured) {
+            $query->where('featured', true);
+        }
+
+        $sortField = $request->sort ?? 'created_at';
+        $sortDir = $request->direction ?? 'desc';
+        $query->orderBy($sortField, $sortDir);
+
+        $properties = $query->paginate(10)->withQueryString();
         return view('properties.index', compact('properties'));
     }
 
@@ -51,6 +69,18 @@ class PropertyController extends Controller
             }
             $data['images'] = $images;
         }
+
+        if ($request->hasFile('documents')) {
+            $docs = [];
+            foreach ($request->file('documents') as $doc) {
+                $docs[] = $doc->store('properties/documents', 'public');
+            }
+            $data['documents'] = $docs;
+        }
+
+        $data['amenities'] = $request->amenities ?? [];
+        $data['nearby_places'] = $request->nearby_places ? json_decode($request->nearby_places, true) : [];
+        $data['featured'] = $request->has('featured');
 
         Property::create($data);
 
@@ -91,6 +121,23 @@ class PropertyController extends Controller
             }
             $data['images'] = $images;
         }
+
+        if ($request->hasFile('documents')) {
+            if ($property->documents) {
+                foreach ($property->documents as $oldDoc) {
+                    Storage::disk('public')->delete($oldDoc);
+                }
+            }
+            $docs = [];
+            foreach ($request->file('documents') as $doc) {
+                $docs[] = $doc->store('properties/documents', 'public');
+            }
+            $data['documents'] = $docs;
+        }
+
+        $data['amenities'] = $request->amenities ?? [];
+        $data['nearby_places'] = $request->nearby_places ? json_decode($request->nearby_places, true) : [];
+        $data['featured'] = $request->has('featured');
 
         $property->update($data);
 

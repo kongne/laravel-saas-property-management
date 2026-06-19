@@ -4,65 +4,120 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold text-slate-800">Edit Property</h2>
-    <a href="{{ route('properties.index') }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300">Back</a>
+    <h1 class="text-2xl font-bold text-slate-800">Edit Property</h1>
+    <a href="{{ route('properties.show', $property) }}" class="btn-secondary btn-sm">Cancel</a>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-slate-200">
+<x-breadcrumbs :items="[['label' => 'Properties', 'url' => route('properties.index')], ['label' => $property->name, 'url' => route('properties.show', $property)], ['label' => 'Edit']]" />
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="text-sm font-semibold text-slate-800">{{ $property->name }}</h3>
+    </div>
     <div class="p-6">
         <form action="{{ route('properties.update', $property) }}" method="POST" enctype="multipart/form-data">
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                 <div class="md:col-span-6">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Property Name *</label>
-                    <input type="text" name="name" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors @error('name') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror" value="{{ old('name', $property->name) }}" required>
-                    @error('name')<div class="text-red-500 text-xs mt-1">{{ $message }}</div>@enderror
+                    <x-forms.input name="name" label="Property Name" :value="old('name', $property->name)" required />
                 </div>
                 <div class="md:col-span-3">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Type *</label>
-                    <select name="type" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        <option value="apartment" {{ $property->type === 'apartment' ? 'selected' : '' }}>Apartment</option>
-                        <option value="house" {{ $property->type === 'house' ? 'selected' : '' }}>House</option>
-                        <option value="commercial" {{ $property->type === 'commercial' ? 'selected' : '' }}>Commercial</option>
-                        <option value="condo" {{ $property->type === 'condo' ? 'selected' : '' }}>Condo</option>
-                        <option value="villa" {{ $property->type === 'villa' ? 'selected' : '' }}>Villa</option>
-                        <option value="other" {{ $property->type === 'other' ? 'selected' : '' }}>Other</option>
-                    </select>
+                    <x-forms.select name="type" label="Type" required :options="\App\Models\Property::propertyTypes()" :value="old('type', $property->type)" placeholder="Select type..." />
                 </div>
                 <div class="md:col-span-3">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
-                    <select name="status" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        <option value="active" {{ $property->status === 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ $property->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        <option value="under_maintenance" {{ $property->status === 'under_maintenance' ? 'selected' : '' }}>Under Maintenance</option>
-                    </select>
+                    <x-forms.select name="status" label="Status" :options="['active' => 'Active', 'inactive' => 'Inactive', 'under_maintenance' => 'Under Maintenance']" :value="old('status', $property->status)" />
                 </div>
+
                 <div class="md:col-span-12">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
-                    <textarea name="description" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" rows="3">{{ old('description', $property->description) }}</textarea>
+                    <x-forms.textarea name="description" label="Description" :value="old('description', $property->description)" rows="4" />
                 </div>
-                <div class="md:col-span-8">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Address *</label>
-                    <input type="text" name="address" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ old('address', $property->address) }}" required>
+
+                <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Location</h4>
+                </div>
+
+                <div class="md:col-span-6">
+                    <x-forms.input name="address" label="Address" :value="old('address', $property->address)" required />
+                </div>
+                <div class="md:col-span-3">
+                    <x-forms.select name="city" label="City" required :options="\App\Models\Property::cities()" :value="old('city', $property->city)" placeholder="Select city..." x-data @change="const d = document.querySelector('[name=district]'); if(d) { fetch('/api/locations/districts?city='+encodeURIComponent($el.value)).then(r=>r.json()).then(data=>{ d.innerHTML='<option value=\"\">Select district...</option>'+data.map(x=>'<option value=\"'+x+'\">'+x+'</option>').join(''); }).catch(()=>{}); }" />
+                </div>
+                <div class="md:col-span-3">
+                    <x-forms.select name="district" label="District" :options="$property->district ? [$property->district => $property->district] : []" :value="old('district', $property->district)" placeholder="Select district..." />
+                </div>
+
+                <div class="md:col-span-4">
+                    <x-forms.input name="state" label="State/Region" :value="old('state', $property->state)" placeholder="e.g. Littoral" />
                 </div>
                 <div class="md:col-span-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">City *</label>
-                    <input type="text" name="city" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ old('city', $property->city) }}" required>
+                    <x-forms.input name="country" label="Country" :value="old('country', $property->country ?? 'Cameroon')" />
                 </div>
                 <div class="md:col-span-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">State</label>
-                    <input type="text" name="state" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ old('state', $property->state) }}">
+                    <x-forms.input name="zip_code" label="Zip/Postal Code" :value="old('zip_code', $property->zip_code)" />
+                </div>
+
+                <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Details</h4>
+                </div>
+
+                <div class="md:col-span-4">
+                    <x-forms.input name="total_units" label="Total Units" type="number" :value="old('total_units', $property->total_units)" min="1" />
                 </div>
                 <div class="md:col-span-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Zip Code</label>
-                    <input type="text" name="zip_code" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ old('zip_code', $property->zip_code) }}">
+                    <x-forms.input name="area_sqft" label="Area (sqft)" type="number" :value="old('area_sqft', $property->area_sqft)" step="0.01" min="0" />
                 </div>
-                <div class="md:col-span-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Country</label>
-                    <input type="text" name="country" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ old('country', $property->country) }}">
+
+                <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Amenities</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        @foreach(\App\Models\Property::amenityOptions() as $val => $label)
+                        @php $checked = in_array($val, old('amenities', $property->amenities ?? [])); @endphp
+                        <x-forms.checkbox name="amenities" :value="$val" :checked="$checked" class="p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">{{ $label }}</x-forms.checkbox>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="col-span-12">
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm">Update Property</button>
+
+                <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Photos & Documents</h4>
+                </div>
+
+                <div class="md:col-span-6">
+                    <x-forms.group label="Property Images">
+                        @if($property->images)
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                            @foreach($property->images as $img)
+                            <div class="aspect-square rounded-lg overflow-hidden border border-slate-200">
+                                <img src="{{ asset('storage/'.$img) }}" class="w-full h-full object-cover">
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+                        <input type="file" name="images[]" multiple accept="image/*" class="input">
+                        <p class="text-xs text-slate-400 mt-1">Leave empty to keep existing images.</p>
+                    </x-forms.group>
+                </div>
+
+                <div class="md:col-span-6">
+                    <x-forms.group label="Documents">
+                        <input type="file" name="documents[]" multiple accept=".pdf,.doc,.docx" class="input">
+                        <p class="text-xs text-slate-400 mt-1">Leave empty to keep existing documents.</p>
+                    </x-forms.group>
+                </div>
+
+                <div class="md:col-span-6">
+                    <x-forms.input name="video_url" label="Video Tour URL" type="url" :value="old('video_url', $property->video_url)" placeholder="https://youtube.com/watch?v=..." />
+                </div>
+
+                <div class="md:col-span-6 flex items-end">
+                    <x-forms.checkbox name="featured" :checked="old('featured', $property->featured)">Mark as Featured Property</x-forms.checkbox>
+                </div>
+
+                <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4 flex items-center gap-3">
+                    <x-forms.button variant="primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Update Property
+                    </x-forms.button>
+                    <a href="{{ route('properties.show', $property) }}" class="btn-secondary">Cancel</a>
                 </div>
             </div>
         </form>

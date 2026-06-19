@@ -82,10 +82,9 @@
             </div>
             <div class="p-6 space-y-4">
                 @if($lease->status === 'active')
-                <form action="{{ route('leases.terminate', $lease) }}" method="POST" onsubmit="return confirm('Terminate this lease?')">
-                    @csrf
-                    <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-sm w-full">Terminate Lease</button>
-                </form>
+                <x-confirm action="{{ route('leases.terminate', $lease) }}" method="POST" message="Terminate this lease?" confirmText="Terminate" title="Terminate Lease">
+                    <button type="button" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-sm w-full">Terminate Lease</button>
+                </x-confirm>
                 @endif
                 <form action="{{ route('leases.renew', $lease) }}" method="POST" class="space-y-3">
                     @csrf

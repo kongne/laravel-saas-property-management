@@ -3,79 +3,63 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">Tenants</h2>
-    <a href="{{ route('tenants.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm inline-flex items-center">
-        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    <a href="{{ route('tenants.create') }}" class="btn-primary btn-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         Add Tenant
     </a>
 </div>
-<div class="bg-white rounded-xl shadow-sm border border-slate-200">
-    <div class="p-6">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4">
-            <div class="md:col-span-4"><input type="text" name="search" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search by name or email..." value="{{ request('search') }}"></div>
-            <div class="md:col-span-3">
-                <select name="status" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    <option value="">All Status</option>
-                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="past" {{ request('status') === 'past' ? 'selected' : '' }}>Past</option>
-                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                </select>
-            </div>
-            <div class="md:col-span-2"><button type="submit" class="w-full px-2.5 py-1.5 text-xs font-medium text-slate-600 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">Filter</button></div>
+
+<x-table title="Tenants" :headers="['name' => 'Name', 'email' => 'Email', 'phone' => 'Phone', 'unit' => 'Unit', 'status' => 'Status', 'actions' => 'Actions']">
+    <x-slot name="actions">
+        <form method="GET" class="flex items-center gap-2 flex-wrap">
+            <input type="text" name="search" class="input !w-48 !py-1.5 !text-xs" placeholder="Search by name or email..." value="{{ request('search') }}">
+            <select name="status" class="select !w-28 !py-1.5 !text-xs">
+                <option value="">All Status</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="past" {{ request('status') === 'past' ? 'selected' : '' }}>Past</option>
+                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+            </select>
+            <button type="submit" class="btn-secondary btn-sm">Filter</button>
         </form>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="bg-slate-50">
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Email</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Phone</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Unit</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tenants as $tenant)
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600"><a href="{{ route('tenants.show', $tenant) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">{{ $tenant->user->name }}</a></td>
-                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600">{{ $tenant->user->email }}</td>
-                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600">{{ $tenant->user->phone ?? '-' }}</td>
-                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600">{{ $tenant->unit->unit_number }} ({{ $tenant->unit->property->name }})</td>
-                        <td class="px-4 py-3 border-t border-slate-100">
-                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full {{
-                                $tenant->status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                                ($tenant->status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                                'bg-slate-100 text-slate-700')
-                            }}">{{ ucfirst($tenant->status) }}</span>
-                        </td>
-                        <td class="px-4 py-3 border-t border-slate-100">
-                            <div class="flex items-center gap-1">
-                                <a href="{{ route('tenants.show', $tenant) }}" class="inline-flex items-center justify-center w-8 h-8 text-sky-600 rounded-md hover:bg-sky-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                </a>
-                                <a href="{{ route('tenants.edit', $tenant) }}" class="inline-flex items-center justify-center w-8 h-8 text-amber-600 rounded-md hover:bg-amber-50 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </a>
-                                <form action="{{ route('tenants.destroy', $tenant) }}" method="POST" class="inline" onsubmit="return confirm('Remove this tenant?')">
-                                    @csrf @method('DELETE')
-                                    <button class="inline-flex items-center justify-center w-8 h-8 text-red-600 rounded-md hover:bg-red-50 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-4 py-3 text-center text-slate-500 border-t border-slate-100">No tenants found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <div class="mt-4">
-            {{ $tenants->links() }}
-        </div>
-    </div>
-</div>
+    </x-slot>
+    @forelse($tenants as $tenant)
+    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-300"><a href="{{ route('tenants.show', $tenant) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 font-medium">{{ $tenant->user->name }}</a></td>
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ $tenant->user->email }}</td>
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ $tenant->user->phone ?? '-' }}</td>
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ $tenant->unit->unit_number }} ({{ $tenant->unit->property->name }})</td>
+        <td class="px-4 py-3">
+            <span class="badge {{
+                $tenant->status === 'active' ? 'badge-success' :
+                ($tenant->status === 'pending' ? 'badge-warning' :
+                'badge-neutral')
+            }}">{{ ucfirst($tenant->status) }}</span>
+        </td>
+        <td class="px-4 py-3">
+            <div class="flex items-center gap-1">
+                <a href="{{ route('tenants.show', $tenant) }}" class="inline-flex items-center justify-center w-8 h-8 text-sky-600 dark:text-sky-400 rounded-md hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </a>
+                <a href="{{ route('tenants.edit', $tenant) }}" class="inline-flex items-center justify-center w-8 h-8 text-amber-600 dark:text-amber-400 rounded-md hover:bg-amber-50 dark:hover:bg-amber-900/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </a>
+                <x-confirm action="{{ route('tenants.destroy', $tenant) }}" method="DELETE" message="Remove this tenant?">
+                    <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-red-600 dark:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </x-confirm>
+            </div>
+        </td>
+    </tr>
+    @empty
+    <tr>
+        <td colspan="6" class="px-4 py-12 text-center">
+            <x-empty-state message="No tenants found." />
+        </td>
+    </tr>
+    @endforelse
+    <x-slot name="footer">
+        <x-pagination :paginator="$tenants" />
+    </x-slot>
+</x-table>
 @endsection

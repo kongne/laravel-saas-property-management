@@ -3,60 +3,38 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">Edit Payment</h2>
-    <a href="{{ route('payments.index') }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300">Back</a>
+    <a href="{{ route('payments.index') }}" class="btn-secondary btn-sm">Back</a>
 </div>
-<div class="bg-white rounded-xl shadow-sm border border-slate-200">
+<div class="card">
+    <div class="card-header">
+        <h3 class="text-sm font-semibold text-slate-800">Payment Information</h3>
+    </div>
     <div class="p-6">
         <form action="{{ route('payments.update', $payment) }}" method="POST">
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="lg:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Lease</label>
-                    <select name="lease_id" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        @foreach($leases as $l)
-                            <option value="{{ $l->id }}" {{ $payment->lease_id == $l->id ? 'selected' : '' }}>{{ $l->tenant->user->name }} - {{ $l->unit->unit_number }}</option>
-                        @endforeach
-                    </select>
+                    <x-forms.select name="lease_id" label="Lease" :options="$leases->mapWithKeys(fn($l) => [$l->id => $l->tenant->user->name.' - '.$l->unit->unit_number])->toArray()" :value="old('lease_id', $payment->lease_id)" />
                 </div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Amount</label><input type="number" name="amount" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->amount }}" step="0.01"></div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Paid Amount</label><input type="number" name="paid_amount" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->paid_amount }}" step="0.01"></div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Late Fee</label><input type="number" name="late_fee" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->late_fee }}" step="0.01"></div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Due Date</label><input type="date" name="due_date" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->due_date->format('Y-m-d') }}"></div>
-                <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Paid Date</label><input type="date" name="paid_date" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->paid_date ? $payment->paid_date->format('Y-m-d') : '' }}"></div>
+                <div><x-forms.input name="amount" label="Amount" type="number" step="0.01" :value="old('amount', $payment->amount)" /></div>
+                <div><x-forms.input name="paid_amount" label="Paid Amount" type="number" step="0.01" :value="old('paid_amount', $payment->paid_amount)" /></div>
+                <div><x-forms.input name="late_fee" label="Late Fee" type="number" step="0.01" :value="old('late_fee', $payment->late_fee)" /></div>
+                <div><x-forms.input name="due_date" label="Due Date" type="date" :value="old('due_date', $payment->due_date->format('Y-m-d'))" /></div>
+                <div><x-forms.input name="paid_date" label="Paid Date" type="date" :value="old('paid_date', $payment->paid_date ? $payment->paid_date->format('Y-m-d') : '')" /></div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Payment Method</label>
-                    <select name="payment_method" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" id="paymentMethodEdit">
-                        <option value="">Select</option>
-                        <option value="cash" {{ $payment->payment_method=='cash'?'selected':'' }}>Cash</option>
-                        <option value="check" {{ $payment->payment_method=='check'?'selected':'' }}>Check</option>
-                        <option value="bank_transfer" {{ $payment->payment_method=='bank_transfer'?'selected':'' }}>Bank Transfer</option>
-                        <option value="credit_card" {{ $payment->payment_method=='credit_card'?'selected':'' }}>Credit Card</option>
-                        <option value="mobile_money" {{ $payment->payment_method=='mobile_money'?'selected':'' }}>Mobile Money</option>
-                        <option value="orange_money" {{ $payment->payment_method=='orange_money'?'selected':'' }}>Orange Money</option>
-                        <option value="mtn_money" {{ $payment->payment_method=='mtn_money'?'selected':'' }}>MTN Money</option>
-                        <option value="other" {{ $payment->payment_method=='other'?'selected':'' }}>Other</option>
-                    </select>
+                    <x-forms.select name="payment_method" label="Payment Method" id="paymentMethodEdit" :options="['' => 'Select', 'cash' => 'Cash', 'check' => 'Check', 'bank_transfer' => 'Bank Transfer', 'credit_card' => 'Credit Card', 'mobile_money' => 'Mobile Money', 'orange_money' => 'Orange Money', 'mtn_money' => 'MTN Money', 'other' => 'Other']" :value="old('payment_method', $payment->payment_method)" />
                 </div>
-                <div id="mobileMoneyFieldEdit" style="{{ in_array($payment->payment_method,['orange_money','mtn_money']) ? '' : 'display:none' }}">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Mobile Money Number</label>
-                    <input type="text" name="mobile_money_number" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->mobile_money_number ?? old('mobile_money_number') }}" placeholder="e.g. 6XX XXX XXX">
+                <div id="mobileMoneyFieldEdit" style="{{ in_array($payment->payment_method ?? '', ['orange_money', 'mtn_money']) ? '' : 'display:none' }}">
+                    <x-forms.input name="mobile_money_number" label="Mobile Money Number" :value="old('mobile_money_number', $payment->mobile_money_number ?? '')" placeholder="e.g. 6XX XXX XXX" />
                 </div>
+                <div><x-forms.input name="transaction_reference" label="Transaction Ref" :value="old('transaction_reference', $payment->transaction_reference ?? '')" /></div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Transaction Ref</label>
-                    <input type="text" name="transaction_reference" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->transaction_reference ?? old('transaction_reference') }}">
+                    <x-forms.select name="status" label="Status" :options="['pending' => 'Pending', 'paid' => 'Paid', 'overdue' => 'Overdue', 'partial' => 'Partial', 'cancelled' => 'Cancelled']" :value="old('status', $payment->status)" />
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
-                    <select name="status" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        @foreach(['pending','paid','overdue','partial','cancelled'] as $s)
-                            <option value="{{ $s }}" {{ $payment->status === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="lg:col-span-4"><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm">Update Payment</button></div>
+                <div class="lg:col-span-4"><x-forms.button variant="primary">Update Payment</x-forms.button></div>
             </div>
         </form>
     </div>
 </div>
-<script>document.getElementById('paymentMethodEdit').addEventListener('change',function(){document.getElementById('mobileMoneyFieldEdit').style.display=this.value==='orange_money'||this.value==='mtn_money'?'block':'none';});</script>
+<script>document.getElementById('paymentMethodEdit')?.addEventListener('change',function(){document.getElementById('mobileMoneyFieldEdit').style.display=this.value==='orange_money'||this.value==='mtn_money'?'block':'none';});</script>
 @endsection

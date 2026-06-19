@@ -12,7 +12,7 @@ class PropertyFactory extends Factory
         return [
             'user_id' => User::factory(),
             'name' => fake()->company() . ' ' . fake()->randomElement(['Apartments', 'Suites', 'Towers', 'Heights', 'Villas']),
-            'type' => fake()->randomElement(['apartment', 'house', 'commercial', 'condo', 'villa', 'other']),
+            'type' => fake()->randomElement(['apartment', 'studio', 'house', 'villa', 'commercial', 'land', 'office', 'warehouse']),
             'description' => fake()->paragraph(),
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),

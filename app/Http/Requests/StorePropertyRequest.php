@@ -15,10 +15,11 @@ class StorePropertyRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'type' => 'required|string|in:apartment,house,commercial,condo,villa,other',
+            'type' => 'required|string|in:apartment,studio,house,villa,commercial,land,office,warehouse',
             'description' => 'nullable|string',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
+            'district' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
             'zip_code' => 'nullable|string|max:20',
             'country' => 'nullable|string|max:100',
@@ -26,10 +27,25 @@ class StorePropertyRequest extends FormRequest
             'longitude' => 'nullable|numeric|between:-180,180',
             'total_units' => 'nullable|integer|min:0',
             'area_sqft' => 'nullable|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
             'amenities' => 'nullable|array',
+            'amenities.*' => 'string',
             'images' => 'nullable|array',
-            'images.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
+            'images.*' => 'image|mimes:jpg,jpeg,png,gif|max:5120',
+            'documents' => 'nullable|array',
+            'documents.*' => 'file|mimes:pdf,doc,docx|max:10240',
+            'video_url' => 'nullable|url|max:500',
+            'featured' => 'nullable|boolean',
+            'nearby_places' => 'nullable|string',
             'status' => 'nullable|string|in:active,inactive,under_maintenance',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'images.*.max' => 'Each image must not exceed 5MB.',
+            'documents.*.max' => 'Each document must not exceed 10MB.',
         ];
     }
 }

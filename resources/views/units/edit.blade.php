@@ -3,45 +3,33 @@
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">Edit Unit</h2>
-    <a href="{{ route('units.index') }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300">Back</a>
+    <a href="{{ route('units.index') }}" class="btn-secondary btn-sm">Back</a>
 </div>
-<div class="bg-white rounded-xl shadow-sm border border-slate-200">
+<div class="card">
+    <div class="card-header">
+        <h3 class="text-sm font-semibold text-slate-800">Unit Information</h3>
+    </div>
     <div class="p-6">
         <form action="{{ route('units.update', $unit) }}" method="POST">
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                 <div class="md:col-span-6">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Property</label>
-                    <select name="property_id" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        @foreach($properties as $p)
-                            <option value="{{ $p->id }}" {{ $unit->property_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
-                        @endforeach
-                    </select>
+                    <x-forms.select name="property_id" label="Property" :options="$properties->mapWithKeys(fn($p) => [$p->id => $p->name])->toArray()" :value="old('property_id', $unit->property_id)" />
                 </div>
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-slate-700 mb-1.5">Unit Number</label><input type="text" name="unit_number" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $unit->unit_number }}" required></div>
+                <div class="md:col-span-3"><x-forms.input name="unit_number" label="Unit Number" :value="old('unit_number', $unit->unit_number)" required /></div>
                 <div class="md:col-span-3">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Type</label>
-                    <select name="type" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        @foreach(['studio','one_bedroom','two_bedroom','three_bedroom','penthouse','commercial','other'] as $t)
-                            <option value="{{ $t }}" {{ $unit->type === $t ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ',$t)) }}</option>
-                        @endforeach
-                    </select>
+                    <x-forms.select name="type" label="Type" :options="['studio' => 'Studio', 'one_bedroom' => '1 Bedroom', 'two_bedroom' => '2 Bedroom', 'three_bedroom' => '3 Bedroom', 'penthouse' => 'Penthouse', 'commercial' => 'Commercial', 'other' => 'Other']" :value="old('type', $unit->type)" />
                 </div>
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-slate-700 mb-1.5">Bedrooms</label><input type="number" name="bedrooms" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $unit->bedrooms }}"></div>
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-slate-700 mb-1.5">Bathrooms</label><input type="number" name="bathrooms" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $unit->bathrooms }}"></div>
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-slate-700 mb-1.5">Rent Amount</label><input type="number" name="rent_amount" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $unit->rent_amount }}" step="0.01" required></div>
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-slate-700 mb-1.5">Security Deposit</label><input type="number" name="security_deposit" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $unit->security_deposit }}" step="0.01"></div>
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-slate-700 mb-1.5">Area (sqft)</label><input type="number" name="area_sqft" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $unit->area_sqft }}" step="0.01"></div>
+                <div class="md:col-span-3"><x-forms.input name="bedrooms" label="Bedrooms" type="number" :value="old('bedrooms', $unit->bedrooms)" /></div>
+                <div class="md:col-span-3"><x-forms.input name="bathrooms" label="Bathrooms" type="number" :value="old('bathrooms', $unit->bathrooms)" /></div>
+                <div class="md:col-span-3"><x-forms.input name="rent_amount" label="Rent Amount" type="number" step="0.01" :value="old('rent_amount', $unit->rent_amount)" required /></div>
+                <div class="md:col-span-3"><x-forms.input name="security_deposit" label="Security Deposit" type="number" step="0.01" :value="old('security_deposit', $unit->security_deposit)" /></div>
+                <div class="md:col-span-3"><x-forms.input name="area_sqft" label="Area (sqft)" type="number" step="0.01" :value="old('area_sqft', $unit->area_sqft)" /></div>
                 <div class="md:col-span-3">
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
-                    <select name="status" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                        @foreach(['available','occupied','maintenance','reserved'] as $s)
-                            <option value="{{ $s }}" {{ $unit->status === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-                        @endforeach
-                    </select>
+                    <x-forms.select name="status" label="Status" :options="['available' => 'Available', 'occupied' => 'Occupied', 'maintenance' => 'Maintenance', 'reserved' => 'Reserved']" :value="old('status', $unit->status)" />
                 </div>
-                <div class="md:col-span-12"><label class="block text-sm font-medium text-slate-700 mb-1.5">Description</label><textarea name="description" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" rows="2">{{ $unit->description }}</textarea></div>
-                <div class="col-span-12"><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm">Update Unit</button></div>
+                <div class="md:col-span-12"><x-forms.textarea name="description" label="Description" :value="old('description', $unit->description)" rows="2" /></div>
+                <div class="col-span-12"><x-forms.button variant="primary">Update Unit</x-forms.button></div>
             </div>
         </form>
     </div>

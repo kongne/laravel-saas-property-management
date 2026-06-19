@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lease;
+use App\Models\MaintenanceRequest;
 use App\Models\Payment;
+use App\Models\Property;
 use App\Models\Tenant;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -98,6 +101,106 @@ class ExportController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
+    }
+
+    public function properties(Request $request)
+    {
+        $query = Property::withCount('units');
+        if (!Auth::user()->isAdmin()) {
+            $query->where('user_id', Auth::id());
+        }
+        $properties = $query->latest()->get();
+        $filename = 'properties-' . now()->format('Y-m-d-His') . '.csv';
+
+        $handle = fopen('php://temp', 'w+');
+        fputs($handle, "\xEF\xBB\xBF");
+        fputcsv($handle, ['Name', 'Type', 'City', 'District', 'Address', 'Units', 'Status', 'Featured', 'Created']);
+
+        foreach ($properties as $p) {
+            fputcsv($handle, [
+                $p->name,
+                $p->type,
+                $p->city,
+                $p->district ?? '',
+                $p->address,
+                $p->units_count ?? 0,
+                $p->status,
+                $p->featured ? 'Yes' : 'No',
+                $p->created_at->format('Y-m-d'),
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
+    public function maintenance(Request $request)
+    {
+        $query = MaintenanceRequest::with(['unit.property', 'tenant.user']);
+        $user = Auth::user();
+        if ($user->isLandlord()) {
+            $query->whereHas('unit.property', fn($q) => $q->where('user_id', $user->id));
+        } elseif ($user->isTenantUser()) {
+            $query->whereHas('tenant', fn($q) => $q->where('user_id', $user->id));
+        }
+        $items = $query->latest()->get();
+        $filename = 'maintenance-' . now()->format('Y-m-d-His') . '.csv';
+
+        $handle = fopen('php://temp', 'w+');
+        fputs($handle, "\xEF\xBB\xBF");
+        fputcsv($handle, ['Title', 'Property', 'Unit', 'Tenant', 'Priority', 'Status', 'Category', 'Created']);
+
+        foreach ($items as $m) {
+            fputcsv($handle, [
+                $m->title,
+                $m->unit->property->name ?? 'N/A',
+                $m->unit->unit_number ?? 'N/A',
+                $m->tenant->user->name ?? 'N/A',
+                $m->priority,
+                $m->status,
+                $m->category ?? '',
+                $m->created_at->format('Y-m-d'),
+            ]);
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
+    public function paymentPdf(Payment $payment)
+    {
+        $payment->load(['tenant.user', 'unit.property', 'lease']);
+        $this->authorizePaymentAccess($payment);
+
+        $pdf = Pdf::loadView('exports.payment-receipt', compact('payment'));
+
+        return $pdf->download("receipt-{$payment->invoice_number}.pdf");
+    }
+
+    private function authorizePaymentAccess(Payment $payment): void
+    {
+        $user = Auth::user();
+        if ($user->isAdmin()) return;
+        if ($user->isLandlord()) {
+            $propertyUserId = $payment->unit?->property?->user_id;
+            if ($propertyUserId && $propertyUserId === $user->id) return;
+        }
+        if ($user->isTenantUser()) {
+            if ($payment->tenant?->user_id === $user->id) return;
+        }
+        abort(403);
     }
 
     public function tenants(Request $request)

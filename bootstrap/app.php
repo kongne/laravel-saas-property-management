@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\SanitizeInput::class,
+            \App\Http\Middleware\SetLocale::class,
         ]);
 
         $middleware->appendToGroup('api', [

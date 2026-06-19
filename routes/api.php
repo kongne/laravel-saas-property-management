@@ -8,10 +8,12 @@ use App\Http\Controllers\Api\PropertyApiController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\TenantApiController;
 use App\Http\Controllers\Api\UnitApiController;
+use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [LoginController::class, 'login']);
+Route::get('/locations/districts', [LocationController::class, 'districts']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard/stats', [App\Http\Controllers\Api\DashboardApiController::class, 'stats']);

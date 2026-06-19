@@ -19,9 +19,19 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\PublicPropertyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::view('/pricing', 'home.pricing')->name('pricing');
+Route::view('/features', 'home.features')->name('features');
+Route::view('/contact', 'home.contact')->name('contact');
+Route::post('/contact', [HomeController::class, 'contactSubmit'])->name('contact.submit');
+Route::get('/lang/{locale}', [App\Http\Controllers\LocaleController::class, 'switch'])->name('locale.switch');
+
+Route::get('/listings', [PublicPropertyController::class, 'index'])->name('listings.index');
+Route::get('/listings/{property}', [PublicPropertyController::class, 'show'])->name('listings.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -35,8 +45,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
-Route::get('/auth/{provider}', [SocialLoginController::class, 'redirect'])->name('social.redirect');
-Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
+Route::get('/auth/{provider}', [SocialLoginController::class, 'redirect'])->name('social.redirect')->middleware('throttle:10,5');
+Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback')->middleware('throttle:10,5');
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -48,6 +58,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('two-factor')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/search', [SearchController::class, 'search'])->name('search.global');
 
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
@@ -60,6 +71,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile/security', [ProfileController::class, 'security'])->name('profile.security');
         Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
         Route::post('/profile/unlink-social/{provider}', [ProfileController::class, 'unlinkSocial'])->name('profile.unlink-social');
+        Route::post('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.email');
+        Route::get('/profile/email/confirm', [ProfileController::class, 'confirmEmail'])->name('profile.confirm-email');
 
         Route::middleware('role:admin,landlord')->group(function () {
             Route::resource('properties', PropertyController::class);
@@ -79,10 +92,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/export/payments', [ExportController::class, 'payments'])->name('payments.export');
             Route::get('/export/leases', [ExportController::class, 'leases'])->name('leases.export');
             Route::get('/export/tenants', [ExportController::class, 'tenants'])->name('tenants.export');
+            Route::get('/export/properties', [ExportController::class, 'properties'])->name('properties.export');
+            Route::get('/export/maintenance', [ExportController::class, 'maintenance'])->name('maintenance.export');
+            Route::get('/payments/{payment}/receipt-pdf', [ExportController::class, 'paymentPdf'])->name('payments.receipt-pdf');
 
             Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
 
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
+            Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
+            Route::post('/users/bulk-deactivate', [UserController::class, 'bulkDeactivate'])->name('users.bulk-deactivate');
             Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
             Route::post('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');

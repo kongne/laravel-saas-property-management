@@ -110,10 +110,9 @@
                         </div>
                     </div>
                     @if(in_array('google', $linkedProviders))
-                        <form action="{{ route('profile.unlink-social', 'google') }}" method="POST" onsubmit="return confirm('Unlink your Google account?');">
-                            @csrf
-                            <button type="submit" class="px-2.5 py-1.5 text-xs font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50">Unlink</button>
-                        </form>
+                        <x-confirm action="{{ route('profile.unlink-social', 'google') }}" method="POST" message="Unlink your Google account?" confirmText="Unlink">
+                            <button type="button" class="px-2.5 py-1.5 text-xs font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50">Unlink</button>
+                        </x-confirm>
                     @else
                         <a href="{{ route('social.redirect', 'google') }}" class="px-2.5 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50 transition-colors">Connect</a>
                     @endif
@@ -130,10 +129,9 @@
                         </div>
                     </div>
                     @if(in_array('github', $linkedProviders))
-                        <form action="{{ route('profile.unlink-social', 'github') }}" method="POST" onsubmit="return confirm('Unlink your GitHub account?');">
-                            @csrf
-                            <button type="submit" class="px-2.5 py-1.5 text-xs font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50">Unlink</button>
-                        </form>
+                        <x-confirm action="{{ route('profile.unlink-social', 'github') }}" method="POST" message="Unlink your GitHub account?" confirmText="Unlink">
+                            <button type="button" class="px-2.5 py-1.5 text-xs font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50">Unlink</button>
+                        </x-confirm>
                     @else
                         <a href="{{ route('social.redirect', 'github') }}" class="px-2.5 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50 transition-colors">Connect</a>
                     @endif
@@ -150,14 +148,40 @@
                         </div>
                     </div>
                     @if(in_array('facebook', $linkedProviders))
-                        <form action="{{ route('profile.unlink-social', 'facebook') }}" method="POST" onsubmit="return confirm('Unlink your Facebook account?');">
-                            @csrf
-                            <button type="submit" class="px-2.5 py-1.5 text-xs font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50">Unlink</button>
-                        </form>
+                        <x-confirm action="{{ route('profile.unlink-social', 'facebook') }}" method="POST" message="Unlink your Facebook account?" confirmText="Unlink">
+                            <button type="button" class="px-2.5 py-1.5 text-xs font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50">Unlink</button>
+                        </x-confirm>
                     @else
                         <a href="{{ route('social.redirect', 'facebook') }}" class="px-2.5 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50 transition-colors">Connect</a>
                     @endif
                 </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+            <div class="p-6">
+                <h5 class="text-lg font-semibold text-slate-800 flex items-center gap-2 mb-3">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    Email Address
+                </h5>
+                <p class="text-slate-500 text-sm mb-4">Current email: <strong>{{ $user->email }}</strong></p>
+                <form method="POST" action="{{ route('profile.email') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Current Password</label>
+                        <input type="password" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors @error('current_password') border-red-500 @enderror" name="current_password" required>
+                        @error('current_password')<div class="text-red-600 text-sm mt-1">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">New Email Address</label>
+                        <input type="email" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors @error('new_email') border-red-500 @enderror" name="new_email" placeholder="new@example.com" required>
+                        @error('new_email')<div class="text-red-600 text-sm mt-1">{{ $message }}</div>@enderror
+                    </div>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm inline-flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Send Verification
+                    </button>
+                </form>
             </div>
         </div>
 

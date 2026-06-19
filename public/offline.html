@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>You're Offline - PropertyManager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .offline-card { text-align: center; max-width: 400px; }
+        .icon-wifi { width: 80px; height: 80px; background: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <div class="icon-wifi">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6c757d" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="#6c757d"/></svg>
+        </div>
+        <h2 class="fw-bold mb-2">You're Offline</h2>
+        <p class="text-muted mb-4">Please check your internet connection and try again.</p>
+        <button onclick="window.location.reload()" class="btn btn-primary px-4 py-2 rounded-pill">Try Again</button>
+        <div class="mt-4 small text-muted">
+            <p>Some features may still be available offline:</p>
+            <ul class="list-unstyled">
+                <li class="mb-1">✓ Previously viewed pages</li>
+                <li class="mb-1">✓ Cached dashboard data</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

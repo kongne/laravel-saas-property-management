@@ -1,0 +1,89 @@
+<?php
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\SocialLoginController;
+use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\TenantController;
+use App\Http\Controllers\UnitController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->middleware('throttle:3,10');
+});
+
+Route::get('/auth/{provider}', [SocialLoginController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/two-factor/challenge', [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+    Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
+    Route::get('/two-factor/recovery', [TwoFactorController::class, 'recovery'])->name('two-factor.recovery');
+    Route::post('/two-factor/recovery/verify', [TwoFactorController::class, 'verifyRecovery'])->name('two-factor.recovery.verify');
+
+    Route::middleware('two-factor')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::post('/two-factor/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
+        Route::post('/two-factor/disable', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
+        Route::post('/two-factor/send-code', [ProfileController::class, 'sendTwoFactorCode'])->name('two-factor.send-code')->middleware('throttle:3,5');
+
+        Route::get('/profile/security', [ProfileController::class, 'security'])->name('profile.security');
+        Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+        Route::post('/profile/unlink-social/{provider}', [ProfileController::class, 'unlinkSocial'])->name('profile.unlink-social');
+
+        Route::middleware('role:admin,landlord')->group(function () {
+            Route::resource('properties', PropertyController::class);
+            Route::resource('units', UnitController::class);
+            Route::resource('tenants', TenantController::class);
+
+            Route::resource('leases', LeaseController::class);
+            Route::post('/leases/{lease}/terminate', [LeaseController::class, 'terminate'])->name('leases.terminate');
+            Route::post('/leases/{lease}/renew', [LeaseController::class, 'renew'])->name('leases.renew');
+
+            Route::post('/payments/{payment}/mark-as-paid', [PaymentController::class, 'markAsPaid'])->name('payments.mark-as-paid');
+            Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
+
+            Route::post('/maintenance/{maintenanceRequest}/resolve', [MaintenanceController::class, 'resolve'])->name('maintenance.resolve');
+            Route::post('/maintenance/{maintenanceRequest}/assign', [MaintenanceController::class, 'assign'])->name('maintenance.assign');
+
+            Route::get('/export/payments', [ExportController::class, 'payments'])->name('payments.export');
+            Route::get('/export/leases', [ExportController::class, 'leases'])->name('leases.export');
+            Route::get('/export/tenants', [ExportController::class, 'tenants'])->name('tenants.export');
+
+            Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
+        });
+
+        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create')->middleware('role:admin,landlord');
+        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store')->middleware('role:admin,landlord');
+        Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+        Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit')->middleware('role:admin,landlord');
+        Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update')->middleware('role:admin,landlord');
+        Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy')->middleware('role:admin,landlord');
+
+        Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+        Route::get('/maintenance/create', [MaintenanceController::class, 'create'])->name('maintenance.create');
+        Route::post('/maintenance', [MaintenanceController::class, 'store'])->name('maintenance.store');
+        Route::get('/maintenance/{maintenanceRequest}', [MaintenanceController::class, 'show'])->name('maintenance.show');
+        Route::get('/maintenance/{maintenanceRequest}/edit', [MaintenanceController::class, 'edit'])->name('maintenance.edit')->middleware('role:admin,landlord');
+        Route::put('/maintenance/{maintenanceRequest}', [MaintenanceController::class, 'update'])->name('maintenance.update')->middleware('role:admin,landlord');
+        Route::delete('/maintenance/{maintenanceRequest}', [MaintenanceController::class, 'destroy'])->name('maintenance.destroy')->middleware('role:admin,landlord');
+    });
+});

@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('title', __('Subscription History'))
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Billing'), 'url' => route('billing.index')],
+        ['label' => __('Subscription History')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-slate-800">{{ __('Subscription History') }}</h1>
     <a href="{{ route('billing.index') }}" class="btn-secondary btn-sm">Back to Billing</a>

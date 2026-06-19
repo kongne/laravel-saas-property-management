@@ -3,6 +3,11 @@
 @section('title', __('Dashboard'))
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-slate-800">{{ __('Dashboard') }}</h1>
     <p class="text-sm text-slate-500">{{ __('Welcome back') }}, {{ $user->name }}</p>

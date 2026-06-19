@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('title', __('Payment').' '.$payment->invoice_number)
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Payments'), 'url' => route('payments.index')],
+        ['label' => __('Payment').' '.$payment->invoice_number],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Payment') }} {{ $payment->invoice_number }}</h2>
     <div class="flex gap-2">

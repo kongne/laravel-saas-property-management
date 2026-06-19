@@ -3,6 +3,12 @@
 @section('title', __('Properties'))
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Properties')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Properties') }}</h2>
     <a href="{{ route('properties.create') }}" class="btn-primary btn-sm">

@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('title', __('Payments'))
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Payments')],
+    ]" />
+@endsection
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Payments') }}</h2>
     <div class="flex items-center gap-4 flex-wrap">

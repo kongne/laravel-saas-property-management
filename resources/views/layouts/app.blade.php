@@ -99,7 +99,9 @@
             <x-nav-link href="{{ route('units.index') }}" :active="request()->routeIs('units.*')" icon="door">{{ __('Units') }}</x-nav-link>
             <x-nav-link href="{{ route('tenants.index') }}" :active="request()->routeIs('tenants.*')" icon="people">{{ __('Tenants') }}</x-nav-link>
             <x-nav-link href="{{ route('leases.index') }}" :active="request()->routeIs('leases.*')" icon="document">{{ __('Leases') }}</x-nav-link>
+            @if(Auth::user()->isAdmin())
             <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')" icon="users">{{ __('Users') }}</x-nav-link>
+            @endif
             @endif
 
             <div x-show="!sidebarCollapsed" class="sidebar-section">{{ __('Finance') }}</div>
@@ -235,6 +237,11 @@
                 </ul>
             </div>
             @endif
+            @hasSection('breadcrumbs')
+            <div class="mb-4">
+                @yield('breadcrumbs')
+            </div>
+            @endif
             <div class="animate-fade-in">
             @yield('content')
             </div>
@@ -251,6 +258,107 @@
         @endauth
     </div>
     </div>{{-- /md:flex --}}
+    @else
+    {{-- Guest layout --}}
+    <nav class="fixed top-0 left-0 right-0 z-50 navbar-blur" x-data="{ guestMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a class="font-bold text-xl no-underline text-slate-900 dark:text-white flex items-center gap-2" href="/">
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    {{ config('app.name') }}
+                </a>
+                <button @click="guestMenuOpen = !guestMenuOpen" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300" type="button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <div class="hidden lg:flex items-center gap-2" id="desktopGuestMenu">
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="/#features">{{ __('Features') }}</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('pricing') }}">{{ __('Pricing') }}</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="/#testimonials">Testimonials</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 {{ request()->routeIs('listings.*') ? 'font-semibold text-indigo-600 dark:text-indigo-400' : '' }}" href="{{ route('listings.index') }}">{{ __('Listings') }}</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('contact') }}">{{ __('Contact Us') }}</a>
+                    <a class="border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-4 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-medium text-sm ml-3 no-underline" href="{{ route('login') }}">{{ __('Sign In') }}</a>
+                    <a class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm no-underline" href="{{ route('register') }}">{{ __('Get Started') }}</a>
+                </div>
+            </div>
+            <div x-show="guestMenuOpen" x-cloak class="lg:hidden pb-4 space-y-1">
+                <a class="block px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="/#features">{{ __('Features') }}</a>
+                <a class="block px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('pricing') }}">{{ __('Pricing') }}</a>
+                <a class="block px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="/#testimonials">Testimonials</a>
+                <a class="block px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 {{ request()->routeIs('listings.*') ? 'font-semibold text-indigo-600 dark:text-indigo-400' : '' }}" href="{{ route('listings.index') }}">{{ __('Listings') }}</a>
+                <a class="block px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('contact') }}">{{ __('Contact Us') }}</a>
+                <hr class="border-slate-200 dark:border-slate-700 my-2">
+                <div class="flex items-center gap-2 px-3">
+                    <a class="flex-1 text-center border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-medium text-sm no-underline" href="{{ route('login') }}">{{ __('Sign In') }}</a>
+                    <a class="flex-1 text-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm no-underline" href="{{ route('register') }}">{{ __('Get Started') }}</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-16 flex flex-col min-h-screen">
+        <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+            @hasSection('breadcrumbs')
+            <div class="mb-4">
+                @yield('breadcrumbs')
+            </div>
+            @endif
+            <div class="animate-fade-in">
+                @yield('content')
+            </div>
+        </main>
+
+        <footer class="bg-slate-900 text-white py-8 mt-12">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+                    <div class="lg:col-span-2">
+                        <h5 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            {{ config('app.name') }}
+                        </h5>
+                        <p class="text-slate-400 text-sm">Your all-in-one property management solution. Secure, reliable, and easy to use.</p>
+                    </div>
+                    <div>
+                        <h6 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Product</h6>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="/#features" class="text-slate-400 hover:text-white no-underline">{{ __('Features') }}</a></li>
+                            <li><a href="{{ route('pricing') }}" class="text-slate-400 hover:text-white no-underline">{{ __('Pricing') }}</a></li>
+                            <li><a href="{{ route('register') }}" class="text-slate-400 hover:text-white no-underline">Sign Up</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h6 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Company</h6>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">About</a></li>
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">Blog</a></li>
+                            <li><a href="{{ route('contact') }}" class="text-slate-400 hover:text-white no-underline">{{ __('Contact Us') }}</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h6 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Legal</h6>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">Privacy</a></li>
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">Terms</a></li>
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">{{ __('Security') }}</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h6 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Support</h6>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">Documentation</a></li>
+                            <li><a href="#" class="text-slate-400 hover:text-white no-underline">FAQ</a></li>
+                            <li><a href="mailto:support@propertymanager.com" class="text-slate-400 hover:text-white no-underline">{{ __('Email') }}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-5 border-slate-700 opacity-50">
+                <div class="text-center text-xs text-slate-500">&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('All rights reserved.') }}</div>
+            </div>
+        </footer>
+    </div>
     @endauth
 
     {{-- Scroll to Top --}}

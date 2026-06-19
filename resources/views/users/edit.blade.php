@@ -3,6 +3,13 @@
 @section('title', __('Edit User'))
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Users'), 'url' => route('users.index')],
+        ['label' => __('Edit User')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Edit User') }}: {{ $user->name }}</h2>
     <a href="{{ route('users.index') }}" class="btn-secondary btn-sm">Back to Users</a>

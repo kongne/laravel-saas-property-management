@@ -1,13 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Property Listings')
+@section('title', __('Property Listings'))
+
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Home'), 'url' => route('home')],
+        ['label' => __('Property Listings')],
+    ]" />
+@endsection
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900">Property Listings</h1>
-            <p class="text-sm text-slate-500 mt-1">Find your perfect property in Cameroon</p>
+            <h1 class="text-3xl font-bold text-slate-900">{{ __('Property Listings') }}</h1>
+            <p class="text-sm text-slate-500 mt-1">{{ __('Find your perfect property in Cameroon') }}</p>
         </div>
         <span class="text-sm text-slate-500">{{ $properties->total() }} properties found</span>
     </div>
@@ -28,6 +35,46 @@
                         <option value="{{ $val }}" {{ request('type') === $val ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Listing Purpose</label>
+                    <select name="purpose" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">All Purposes</option>
+                        @foreach($purposes as $val => $label)
+                        <option value="{{ $val }}" {{ request('purpose') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Style / Category</label>
+                    <select name="category" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">All Categories</option>
+                        @foreach($categories as $val => $label)
+                        <option value="{{ $val }}" {{ request('category') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Compartments (Bedrooms)</label>
+                    <input type="number" name="bedrooms" value="{{ request('bedrooms') }}" placeholder="e.g. 2" min="0" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Region (Province)</label>
+                    <select name="region" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">All Regions</option>
+                        @foreach(['Littoral', 'Centre', 'Ouest', 'Nord-Ouest', 'Sud-Ouest', 'Sud', 'Est', 'Adamaoua', 'Nord', 'Extrême-Nord'] as $r)
+                        <option value="{{ $r }}" {{ request('region') === $r ? 'selected' : '' }}>{{ $r }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Area / Neighborhood</label>
+                    <input type="text" name="area" value="{{ request('area') }}" placeholder="e.g. Bonapriso, Bastos" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
                 <div>

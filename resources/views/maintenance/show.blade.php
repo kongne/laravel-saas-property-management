@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('title', $maintenanceRequest->title)
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Maintenance Requests'), 'url' => route('maintenance.index')],
+        ['label' => $maintenanceRequest->title],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ $maintenanceRequest->title }}</h2>
     <div class="flex items-center gap-2">

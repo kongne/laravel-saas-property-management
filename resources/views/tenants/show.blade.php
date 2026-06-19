@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('title', $tenant->user->name)
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Tenants'), 'url' => route('tenants.index')],
+        ['label' => $tenant->user->name],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ $tenant->user->name }}</h2>
     <div class="flex items-center gap-2">

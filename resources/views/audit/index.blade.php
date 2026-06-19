@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('title', __('Audit Log'))
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Audit Log')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <div>
         <h2 class="text-2xl font-bold text-slate-800">{{ __('Audit Log') }}</h2>

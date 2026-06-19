@@ -3,6 +3,12 @@
 @section('title', __('Units'))
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Units')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Units') }}</h2>
     <a href="{{ route('units.create') }}" class="btn-primary btn-sm">

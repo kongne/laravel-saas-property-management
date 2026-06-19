@@ -1,5 +1,11 @@
 @extends('layouts.app')
 @section('title', __('Manage Plans'))
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Billing'), 'url' => route('billing.index')],
+        ['label' => __('Manage Plans')],
+    ]" />
+@endsection
 @section('content')
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-slate-800">{{ __('Manage Plans') }}</h1>
@@ -32,7 +38,8 @@
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                 @foreach($plans as $plan)
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors" x-data="{ editing: false }">
+                <tbody x-data="{ editing: false }" class="divide-y divide-slate-100 dark:divide-slate-700">
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors" x-show="!editing">
                     <td class="px-4 py-3">
                         <div class="font-medium text-slate-800">{{ $plan->name }}</div>
                         <div class="text-xs text-slate-400">/{{ $plan->slug }}</div>
@@ -51,7 +58,7 @@
                         @endif
                     </td>
                     <td class="px-4 py-3">
-                        <button @@click="editing = !editing" class="btn-secondary btn-sm text-xs">{{ __('Edit') }}</button>
+                        <button @@click="editing = true" class="btn-secondary btn-sm text-xs">{{ __('Edit') }}</button>
                     </td>
                 </tr>
                 <tr x-show="editing" x-cloak>
@@ -105,18 +112,18 @@
                             <div>
                                 <label class="block text-xs text-slate-500 mb-1">{{ __('Features') }}</label>
                                 <div class="flex flex-wrap gap-2">
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="can_export" value="1" {{ $plan->can_export ? 'checked' : '' }} class="rounded"> {{ __('Export') }}</label>
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="can_access_audit" value="1" {{ $plan->can_access_audit ? 'checked' : '' }} class="rounded"> {{ __('Audit') }}</label>
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="has_advanced_reports" value="1" {{ $plan->has_advanced_reports ? 'checked' : '' }} class="rounded"> {{ __('Reports') }}</label>
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="has_api_access" value="1" {{ $plan->has_api_access ? 'checked' : '' }} class="rounded"> {{ __('API') }}</label>
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="has_priority_support" value="1" {{ $plan->has_priority_support ? 'checked' : '' }} class="rounded"> {{ __('Support') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="can_export" value="0"><input type="checkbox" name="can_export" value="1" {{ $plan->can_export ? 'checked' : '' }} class="rounded"> {{ __('Export') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="can_access_audit" value="0"><input type="checkbox" name="can_access_audit" value="1" {{ $plan->can_access_audit ? 'checked' : '' }} class="rounded"> {{ __('Audit') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="has_advanced_reports" value="0"><input type="checkbox" name="has_advanced_reports" value="1" {{ $plan->has_advanced_reports ? 'checked' : '' }} class="rounded"> {{ __('Reports') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="has_api_access" value="0"><input type="checkbox" name="has_api_access" value="1" {{ $plan->has_api_access ? 'checked' : '' }} class="rounded"> {{ __('API') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="has_priority_support" value="0"><input type="checkbox" name="has_priority_support" value="1" {{ $plan->has_priority_support ? 'checked' : '' }} class="rounded"> {{ __('Support') }}</label>
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-xs text-slate-500 mb-1">{{ __('Flags') }}</label>
                                 <div class="flex flex-wrap gap-3">
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="is_popular" value="1" {{ $plan->is_popular ? 'checked' : '' }} class="rounded"> {{ __('Popular') }}</label>
-                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="is_active" value="1" {{ $plan->is_active ? 'checked' : '' }} class="rounded"> {{ __('Active') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="is_popular" value="0"><input type="checkbox" name="is_popular" value="1" {{ $plan->is_popular ? 'checked' : '' }} class="rounded"> {{ __('Popular') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="is_active" value="0"><input type="checkbox" name="is_active" value="1" {{ $plan->is_active ? 'checked' : '' }} class="rounded"> {{ __('Active') }}</label>
                                 </div>
                             </div>
                             <div>
@@ -130,16 +137,17 @@
                             <div class="md:col-span-3 lg:col-span-4 flex items-center gap-2 pt-2 border-t border-slate-200">
                                 <button type="submit" class="btn-primary btn-sm">{{ __('Save Changes') }}</button>
                                 <button type="button" @@click="editing = false" class="btn-secondary btn-sm">{{ __('Cancel') }}</button>
-                                @if(!$plan->subscriptions()->exists())
-                                <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="ml-auto" onsubmit="return confirm('{{ __('Delete this plan?') }}')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn-danger btn-sm">{{ __('Delete') }}</button>
-                                </form>
-                                @endif
                             </div>
                         </form>
+                        @if(!$plan->subscriptions()->exists())
+                        <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="mt-3" onsubmit="return confirm('{{ __('Delete this plan?') }}')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn-danger btn-sm">{{ __('Delete') }}</button>
+                        </form>
+                        @endif
                     </td>
                 </tr>
+                </tbody>
                 @endforeach
             </tbody>
         </table>
@@ -205,23 +213,23 @@
                 <label class="block text-xs text-slate-500 mb-1">{{ __('Sort Order') }}</label>
                 <input type="number" name="sort_order" class="input !w-full !py-1.5 !text-xs" min="0" value="0">
             </div>
-            <div>
-                <label class="block text-xs text-slate-500 mb-1">{{ __('Features') }}</label>
-                <div class="flex flex-wrap gap-2">
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="can_export" value="1" class="rounded"> {{ __('Export') }}</label>
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="can_access_audit" value="1" class="rounded"> {{ __('Audit') }}</label>
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="has_advanced_reports" value="1" class="rounded"> {{ __('Reports') }}</label>
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="has_api_access" value="1" class="rounded"> {{ __('API') }}</label>
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="has_priority_support" value="1" class="rounded"> {{ __('Support') }}</label>
-                </div>
-            </div>
-            <div>
-                <label class="block text-xs text-slate-500 mb-1">{{ __('Flags') }}</label>
-                <div class="flex gap-3">
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="is_popular" value="1" class="rounded"> {{ __('Popular') }}</label>
-                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="is_active" value="1" class="rounded" checked> {{ __('Active') }}</label>
-                </div>
-            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">{{ __('Features') }}</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="can_export" value="0"><input type="checkbox" name="can_export" value="1" class="rounded"> {{ __('Export') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="can_access_audit" value="0"><input type="checkbox" name="can_access_audit" value="1" class="rounded"> {{ __('Audit') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="has_advanced_reports" value="0"><input type="checkbox" name="has_advanced_reports" value="1" class="rounded"> {{ __('Reports') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="has_api_access" value="0"><input type="checkbox" name="has_api_access" value="1" class="rounded"> {{ __('API') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="has_priority_support" value="0"><input type="checkbox" name="has_priority_support" value="1" class="rounded"> {{ __('Support') }}</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">{{ __('Flags') }}</label>
+                                <div class="flex gap-3">
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="is_popular" value="0"><input type="checkbox" name="is_popular" value="1" class="rounded"> {{ __('Popular') }}</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="hidden" name="is_active" value="0"><input type="checkbox" name="is_active" value="1" class="rounded" checked> {{ __('Active') }}</label>
+                                </div>
+                            </div>
             <div class="md:col-span-3 lg:col-span-4 flex items-center gap-2 pt-2 border-t border-slate-200">
                 <button type="submit" class="btn-primary btn-sm">{{ __('Create Plan') }}</button>
             </div>

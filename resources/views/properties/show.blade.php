@@ -3,6 +3,13 @@
 @section('title', $property->name)
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Properties'), 'url' => route('properties.index')],
+        ['label' => $property->name],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-slate-800">{{ $property->name }}</h1>
     <div class="flex items-center gap-2">

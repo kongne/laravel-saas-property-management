@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('title', __('Create Lease'))
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Leases'), 'url' => route('leases.index')],
+        ['label' => __('Create Lease')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Create Lease') }}</h2>
     <a href="{{ route('leases.index') }}" class="btn-secondary btn-sm">{{ __('Back') }}</a>

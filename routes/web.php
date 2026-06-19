@@ -33,6 +33,7 @@ Route::get('/currency/{code}', [App\Http\Controllers\CurrencySwitchController::c
 
 Route::get('/listings', [PublicPropertyController::class, 'index'])->name('listings.index');
 Route::get('/listings/{property}', [PublicPropertyController::class, 'show'])->name('listings.show');
+Route::post('/listings/{property}/book', [PublicPropertyController::class, 'bookVisit'])->name('listings.book');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -59,6 +60,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('two-factor')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/bookings', [\App\Http\Controllers\BookingController::class, 'index'])->name('bookings.index');
+        Route::post('/bookings/{booking}/status', [\App\Http\Controllers\BookingController::class, 'updateStatus'])->name('bookings.status');
         Route::get('/search', [SearchController::class, 'search'])->name('search.global');
 
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -98,14 +101,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/payments/{payment}/receipt-pdf', [ExportController::class, 'paymentPdf'])->name('payments.receipt-pdf')->middleware('feature:export');
 
             Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index')->middleware('feature:audit');
-
-            Route::get('/users', [UserController::class, 'index'])->name('users.index');
-            Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
-            Route::post('/users/bulk-deactivate', [UserController::class, 'bulkDeactivate'])->name('users.bulk-deactivate');
-            Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-            Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-            Route::post('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
-            Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
 
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
@@ -126,6 +121,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/admin/plans', [\App\Http\Controllers\Billing\PlanAdminController::class, 'store'])->name('admin.plans.store');
             Route::put('/admin/plans/{plan}', [\App\Http\Controllers\Billing\PlanAdminController::class, 'update'])->name('admin.plans.update');
             Route::delete('/admin/plans/{plan}', [\App\Http\Controllers\Billing\PlanAdminController::class, 'destroy'])->name('admin.plans.destroy');
+
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
+            Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
+            Route::post('/users/bulk-deactivate', [UserController::class, 'bulkDeactivate'])->name('users.bulk-deactivate');
+            Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+            Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::post('/users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
+            Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
 
         Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');

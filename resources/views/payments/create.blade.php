@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('title', __('Record Payment'))
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Payments'), 'url' => route('payments.index')],
+        ['label' => __('Record Payment')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Record Payment') }}</h2>
     <a href="{{ route('payments.index') }}" class="btn-secondary btn-sm">{{ __('Back') }}</a>

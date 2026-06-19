@@ -2,16 +2,16 @@
 
 @section('title', $property->name)
 
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Home'), 'url' => route('home')],
+        ['label' => __('Listings'), 'url' => route('listings.index')],
+        ['label' => $property->name],
+    ]" />
+@endsection
+
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <a href="{{ route('home') }}" class="hover:text-indigo-600">{{ __('Home') }}</a>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <a href="{{ route('listings.index') }}" class="hover:text-indigo-600">Listings</a>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <span class="text-slate-800 font-medium">{{ $property->name }}</span>
-    </nav>
-
     @if($property->images)
     <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-8 rounded-xl overflow-hidden" x-data="{ activeImage: 0 }">
         <div class="md:col-span-4 relative bg-slate-900">
@@ -140,11 +140,68 @@
 
                 <hr class="my-4">
 
-                <a href="{{ route('register') }}" class="w-full bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium inline-flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    Contact Agent
-                </a>
-                <p class="text-xs text-slate-400 text-center mt-2">Sign up to inquire about this property</p>
+                <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Book a Visit
+                </h3>
+
+                <form action="{{ route('listings.book', $property) }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Your Name</label>
+                        <input type="text" name="name" required placeholder="John Doe" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
+                        <input type="email" name="email" required placeholder="john@example.com" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Phone Number</label>
+                        <input type="text" name="phone" required placeholder="e.g. +237 6..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    
+                    @if($property->units->count() > 0)
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Select Unit (Optional)</label>
+                        <select name="unit_id" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Whole Property</option>
+                            @foreach($property->units as $unit)
+                            <option value="{{ $unit->id }}">Unit {{ $unit->unit_number }} ({{ number_format($unit->rent_amount, 0, ',', ' ') }} FCFA/mo)</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Preferred Date</label>
+                            <input type="date" name="visit_date" required min="{{ date('Y-m-d') }}" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Preferred Time</label>
+                            <select name="visit_time" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="09:00 AM">09:00 AM</option>
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="12:00 PM">12:00 PM</option>
+                                <option value="01:00 PM">01:00 PM</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="03:00 PM">03:00 PM</option>
+                                <option value="04:00 PM">04:00 PM</option>
+                                <option value="05:00 PM">05:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Additional Message</label>
+                        <textarea name="message" rows="2" placeholder="Tell us about your interests..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold flex items-center justify-center gap-2 shadow-sm">
+                        Confirm Booking Request
+                    </button>
+                </form>
             </div>
         </div>
     </div>

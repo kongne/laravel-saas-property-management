@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('title', __('Maintenance Requests'))
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Maintenance Requests')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Maintenance Requests') }}</h2>
     <a href="{{ route('maintenance.create') }}" class="btn-primary btn-sm">

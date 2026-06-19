@@ -3,6 +3,12 @@
 @section('title', __('Notifications'))
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Notifications')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-2xl font-bold text-slate-800">{{ __('Notifications') }}</h2>
     @if(Auth::user()->unreadNotifications->count())

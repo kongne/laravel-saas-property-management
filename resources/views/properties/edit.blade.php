@@ -3,6 +3,13 @@
 @section('title', __('Edit Property'))
 
 @section('content')
+@section('breadcrumbs')
+    <x-breadcrumbs :items="[
+        ['label' => __('Dashboard'), 'url' => route('dashboard')],
+        ['label' => __('Properties'), 'url' => route('properties.index')],
+        ['label' => __('Edit Property')],
+    ]" />
+@endsection
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-slate-800">{{ __('Edit Property') }}</h1>
     <a href="{{ route('properties.show', $property) }}" class="btn-secondary btn-sm">{{ __('Cancel') }}</a>

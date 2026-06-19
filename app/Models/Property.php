@@ -32,6 +32,13 @@ class Property extends Model
         'featured',
         'documents',
         'status',
+        'purpose',
+        'price',
+        'region',
+        'area',
+        'category',
+        'bedrooms',
+        'bathrooms',
     ];
 
     protected $casts = [
@@ -43,6 +50,9 @@ class Property extends Model
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
         'area_sqft' => 'decimal:2',
+        'price' => 'decimal:2',
+        'bedrooms' => 'integer',
+        'bathrooms' => 'integer',
     ];
 
     protected $appends = ['primary_image'];
@@ -166,5 +176,45 @@ class Property extends Model
             'cable_tv' => 'Cable TV',
             'staff_quarters' => 'Staff Quarters',
         ];
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public static function categories(): array
+    {
+        return [
+            'standard' => 'Standard Room',
+            'moderne_simple' => 'Chambre moderne et simple',
+            'studio_moderne' => 'Studio moderne et simple',
+            'appartement_moderne' => 'Appartement moderne et simple',
+        ];
+    }
+
+    public function scopeInRegion($query, $region)
+    {
+        return $query->where('region', $region);
+    }
+
+    public function scopeInArea($query, $area)
+    {
+        return $query->where('area', $area);
+    }
+
+    public function scopeForPurpose($query, $purpose)
+    {
+        return $query->where('purpose', $purpose);
+    }
+
+    public function scopeOfCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
+
+    public function scopeWithBedrooms($query, $bedrooms)
+    {
+        return $query->where('bedrooms', $bedrooms);
     }
 }

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name') }} - Forgot Password</title>
+    <title>{{ config('app.name') }} - {{ __('Forgot Password') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700">
-                        <h4 class="font-bold text-xl text-slate-800 dark:text-slate-100 mb-1">Forgot your password?</h4>
+                        <h4 class="font-bold text-xl text-slate-800 dark:text-slate-100 mb-1">{{ __('Forgot your password?') }}</h4>
                         <p class="text-slate-500 dark:text-slate-400 text-sm">Enter your email and we'll send you a reset link</p>
                     </div>
                     <div class="p-6">
@@ -51,7 +51,7 @@
                         <form method="POST" action="{{ route('password.email') }}">
                             @csrf
                             <div class="mb-4">
-                                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Email Address</label>
+                                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Email Address') }}</label>
                                 <input type="email" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autofocus autocomplete="email">
                                 @error('email')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -61,7 +61,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
-                                Send Reset Link
+                                {{ __('Send Reset Link') }}
                             </button>
                         </form>
 

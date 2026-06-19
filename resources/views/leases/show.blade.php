@@ -6,9 +6,9 @@
     <div class="flex gap-2">
         <a href="{{ route('leases.edit', $lease) }}" class="bg-amber-400 text-white px-4 py-2 rounded-lg hover:bg-amber-500 transition-colors font-medium text-sm inline-flex items-center gap-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            Edit
+            {{ __('Edit') }}
         </a>
-        <a href="{{ route('leases.index') }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300">Back</a>
+        <a href="{{ route('leases.index') }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300">{{ __('Back') }}</a>
     </div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -19,12 +19,12 @@
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><strong>Tenant:</strong> {{ $lease->tenant->user->name }}</div>
-                    <div><strong>Unit:</strong> {{ $lease->unit->unit_number }} ({{ $lease->unit->property->name }})</div>
+                    <div><strong>{{ __('Tenant') }}:</strong> {{ $lease->tenant->user->name }}</div>
+                    <div><strong>{{ __('Unit') }}:</strong> {{ $lease->unit->unit_number }} ({{ $lease->unit->property->name }})</div>
                     <div><strong>Start:</strong> {{ $lease->start_date->format('M d, Y') }}</div>
                     <div><strong>End:</strong> {{ $lease->end_date->format('M d, Y') }}</div>
-                    <div><strong>Status:</strong> <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full {{ $lease->status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700' }}">{{ ucfirst($lease->status) }}</span></div>
-                    <div><strong>Rent:</strong> ${{ number_format($lease->rent_amount, 2) }}/{{ $lease->payment_frequency }}</div>
+                    <div><strong>{{ __('Status') }}:</strong> <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full {{ $lease->status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700' }}">{{ ucfirst($lease->status) }}</span></div>
+                    <div><strong>{{ __('Rent') }}:</strong> ${{ number_format($lease->rent_amount, 2) }}/{{ $lease->payment_frequency }}</div>
                     <div><strong>Deposit:</strong> ${{ number_format($lease->security_deposit ?? 0, 2) }}</div>
                     <div><strong>Due Day:</strong> {{ $lease->due_day }} of month</div>
                     @if($lease->terms)
@@ -35,7 +35,7 @@
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-slate-200">
             <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                <h5 class="text-lg font-semibold text-slate-800">Payments</h5>
+                <h5 class="text-lg font-semibold text-slate-800">{{ __('Payments') }}</h5>
                 <a href="{{ route('payments.create', ['lease_id' => $lease->id]) }}" class="px-2.5 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50 transition-colors">Record Payment</a>
             </div>
             <div class="p-6">
@@ -44,11 +44,11 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">Invoice</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">Due</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">Amount</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">Paid</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">{{ __('Invoice') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">{{ __('Due') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">{{ __('Amount') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">{{ __('Paid') }}</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 border-b border-slate-200">{{ __('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +78,7 @@
     <div>
         <div class="bg-white rounded-xl shadow-sm border border-slate-200">
             <div class="px-6 py-4 border-b border-slate-200">
-                <h5 class="text-lg font-semibold text-slate-800">Actions</h5>
+                <h5 class="text-lg font-semibold text-slate-800">{{ __('Actions') }}</h5>
             </div>
             <div class="p-6 space-y-4">
                 @if($lease->status === 'active')

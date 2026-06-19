@@ -1,12 +1,41 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', __('Dashboard'))
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
-    <p class="text-sm text-slate-500">Welcome back, {{ $user->name }}</p>
+    <h1 class="text-2xl font-bold text-slate-800">{{ __('Dashboard') }}</h1>
+    <p class="text-sm text-slate-500">{{ __('Welcome back') }}, {{ $user->name }}</p>
 </div>
+
+@if($user->isLandlord())
+@php
+    $plan = $user->currentPlan();
+    $sub = $user->currentSubscription();
+@endphp
+@if($plan && $sub && $sub->isTrial() && $sub->onTrial())
+<div class="flex items-center gap-3 p-4 mb-6 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
+    <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+    </svg>
+    <p class="text-sm text-indigo-700 dark:text-indigo-300 flex-1">
+        You're on the <strong>{{ $plan->name }}</strong> trial. <strong>{{ $sub->daysRemaining() }} day(s)</strong> remaining.
+        <a href="{{ route('billing.index') }}" class="underline font-medium hover:text-indigo-800">{{ __('Choose a plan') }}</a>
+    </p>
+</div>
+@endif
+@if($user->needsUpgrade())
+<div class="flex items-center gap-3 p-4 mb-6 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+    <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p class="text-sm text-amber-700 dark:text-amber-300 flex-1">
+        You've reached a plan limit.
+        <a href="{{ route('billing.index') }}" class="underline font-medium hover:text-amber-800">{{ __('Upgrade your plan') }}</a>
+    </p>
+</div>
+@endif
+@endif
 
 @if($user->isAdmin() || $user->isLandlord())
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -14,8 +43,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="flex items-center gap-2">
-                    <p class="text-sm font-medium text-slate-500">Properties</p>
-                    <a href="{{ route('properties.create') }}" class="text-indigo-500 hover:text-indigo-700 transition-colors" title="Add property">
+                    <p class="text-sm font-medium text-slate-500">{{ __('Properties') }}</p>
+                    <a href="{{ route('properties.create') }}" class="text-indigo-500 hover:text-indigo-700 transition-colors" :title="__('Add Property')">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     </a>
                 </div>
@@ -30,8 +59,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <div class="flex items-center gap-2">
-                    <p class="text-sm font-medium text-slate-500">Total Units</p>
-                    <a href="{{ route('units.create') }}" class="text-emerald-500 hover:text-emerald-700 transition-colors" title="Add unit">
+                    <p class="text-sm font-medium text-slate-500">{{ __('Total Units') }}</p>
+                    <a href="{{ route('units.create') }}" class="text-emerald-500 hover:text-emerald-700 transition-colors" :title="__('Add Unit')">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     </a>
                 </div>
@@ -41,14 +70,14 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             </div>
         </div>
-        <p class="text-xs text-slate-400 mt-1">{{ $stats['occupied_units'] ?? 0 }} occupied / {{ $stats['available_units'] ?? 0 }} available</p>
+        <p class="text-xs text-slate-400 mt-1">{{ $stats['occupied_units'] ?? 0 }} {{ __('occupied') }} / {{ $stats['available_units'] ?? 0 }} {{ __('available') }}</p>
     </div>
     <div class="card card-hover p-6">
         <div class="flex items-center justify-between">
             <div>
                 <div class="flex items-center gap-2">
-                    <p class="text-sm font-medium text-slate-500">Tenants</p>
-                    <a href="{{ route('tenants.create') }}" class="text-amber-500 hover:text-amber-700 transition-colors" title="Add tenant">
+                    <p class="text-sm font-medium text-slate-500">{{ __('Tenants') }}</p>
+                    <a href="{{ route('tenants.create') }}" class="text-amber-500 hover:text-amber-700 transition-colors" :title="__('Add Tenant')">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     </a>
                 </div>
@@ -58,12 +87,12 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
             </div>
         </div>
-        <p class="text-xs text-slate-400 mt-1">{{ $stats['active_leases'] ?? 0 }} active leases</p>
+        <p class="text-xs text-slate-400 mt-1">{{ $stats['active_leases'] ?? 0 }} {{ __('active leases') }}</p>
     </div>
     <div class="card card-hover p-6">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-slate-500">Monthly Revenue</p>
+                <p class="text-sm font-medium text-slate-500">{{ __('Monthly Revenue') }}</p>
                 <p class="text-2xl font-bold text-slate-800">${{ number_format($stats['monthly_revenue'] ?? 0, 2) }}</p>
             </div>
             <div class="w-12 h-12 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500">
@@ -77,7 +106,7 @@
     <div class="card card-hover p-6">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-red-500">Overdue Payments</p>
+                <p class="text-sm font-medium text-red-500">{{ __('Overdue Payments') }}</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $stats['overdue_payments'] ?? 0 }}</p>
             </div>
             <div class="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center text-red-500">
@@ -88,7 +117,7 @@
     <div class="card card-hover p-6">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-amber-500">Pending Payments</p>
+                <p class="text-sm font-medium text-amber-500">{{ __('Pending Payments') }}</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $stats['pending_payments'] ?? 0 }}</p>
             </div>
             <div class="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500">
@@ -99,7 +128,7 @@
     <div class="card card-hover p-6">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-slate-500">Open Maintenance</p>
+                <p class="text-sm font-medium text-slate-500">{{ __('Open Maintenance') }}</p>
                 <p class="text-2xl font-bold text-slate-800">{{ $stats['open_maintenance'] ?? 0 }}</p>
             </div>
             <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
@@ -149,7 +178,7 @@
 })">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div class="card card-hover p-6">
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">Monthly Revenue</h3>
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4">{{ __('Monthly Revenue') }}</h3>
             <div class="h-64 sm:h-72" x-show="!chartReady">
                 <x-skeleton type="chart" />
             </div>
@@ -170,9 +199,9 @@
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
         <div class="flex items-center gap-2">
             <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-            <h3 class="text-sm font-semibold text-slate-800">Recent Notifications</h3>
+            <h3 class="text-sm font-semibold text-slate-800">{{ __('Recent Notifications') }}</h3>
         </div>
-        <a href="{{ route('notifications.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">View All</a>
+        <a href="{{ route('notifications.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">{{ __('View All') }}</a>
     </div>
     <div class="p-6">
         @php $recentNotifications = Auth::user()->notifications()->latest()->take(5)->get(); @endphp
@@ -189,7 +218,7 @@
                         @if(!$notification->read_at)
                         <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium whitespace-nowrap">Mark read</button>
+                            <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium whitespace-nowrap">{{ __('Mark read') }}</button>
                         </form>
                         @endif
                         <span class="text-xs text-slate-400 whitespace-nowrap">{{ $notification->created_at->diffForHumans() }}</span>
@@ -211,26 +240,26 @@
     <div class="card-header">
         <div class="flex items-center gap-2">
             <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            <h3 class="text-sm font-semibold text-slate-800">Quick Actions</h3>
+            <h3 class="text-sm font-semibold text-slate-800">{{ __('Quick Actions') }}</h3>
         </div>
     </div>
     <div class="p-6">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <a href="{{ route('properties.create') }}" class="flex flex-col items-center gap-2 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors no-underline group">
                 <svg class="w-6 h-6 text-indigo-500 group-hover:text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-indigo-600">Add Property</span>
+                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-indigo-600">{{ __('Add Property') }}</span>
             </a>
             <a href="{{ route('tenants.create') }}" class="flex flex-col items-center gap-2 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:border-amber-200 dark:hover:border-amber-700 transition-colors no-underline group">
                 <svg class="w-6 h-6 text-amber-500 group-hover:text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-amber-600">Add Tenant</span>
+                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-amber-600">{{ __('Add Tenant') }}</span>
             </a>
             <a href="{{ route('payments.create') }}" class="flex flex-col items-center gap-2 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:border-rose-200 dark:hover:border-rose-700 transition-colors no-underline group">
                 <svg class="w-6 h-6 text-rose-500 group-hover:text-rose-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-rose-600">Record Payment</span>
+                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-rose-600">{{ __('Record Payment') }}</span>
             </a>
             <a href="{{ route('maintenance.create') }}" class="flex flex-col items-center gap-2 p-4 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 hover:border-cyan-200 dark:hover:border-cyan-700 transition-colors no-underline group">
                 <svg class="w-6 h-6 text-cyan-500 group-hover:text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-cyan-600">New Request</span>
+                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 group-hover:text-cyan-600">{{ __('New Request') }}</span>
             </a>
         </div>
     </div>
@@ -241,55 +270,55 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
     <div class="card card-hover">
         <div class="card-header">
-            <h3 class="text-sm font-semibold text-slate-800">My Unit</h3>
+            <h3 class="text-sm font-semibold text-slate-800">{{ __('My Unit') }}</h3>
         </div>
         <div class="p-6 space-y-3">
             @if($stats['my_unit'])
             <div class="flex justify-between text-sm">
-                <span class="text-slate-500">Unit:</span>
+                <span class="text-slate-500">{{ __('Unit') }}:</span>
                 <span class="font-medium text-slate-800">{{ $stats['my_unit']->unit_number }}</span>
             </div>
             <div class="flex justify-between text-sm">
-                <span class="text-slate-500">Property:</span>
+                <span class="text-slate-500">{{ __('Property') }}:</span>
                 <span class="font-medium text-slate-800">{{ $stats['my_unit']->property->name ?? 'N/A' }}</span>
             </div>
             <div class="flex justify-between text-sm">
-                <span class="text-slate-500">Rent:</span>
+                <span class="text-slate-500">{{ __('Rent') }}:</span>
                 <span class="font-medium text-slate-800">${{ number_format($stats['my_unit']->rent_amount, 2) }}</span>
             </div>
             @else
-            <p class="text-sm text-slate-500">No unit assigned.</p>
+            <p class="text-sm text-slate-500">{{ __('No unit assigned.') }}</p>
             @endif
         </div>
     </div>
     <div class="card card-hover">
         <div class="card-header">
-            <h3 class="text-sm font-semibold text-slate-800">My Lease</h3>
+            <h3 class="text-sm font-semibold text-slate-800">{{ __('My Lease') }}</h3>
         </div>
         <div class="p-6 space-y-3">
             @if($stats['my_lease'])
             <div class="flex justify-between text-sm">
-                <span class="text-slate-500">From:</span>
+                <span class="text-slate-500">{{ __('From') }}:</span>
                 <span class="font-medium text-slate-800">{{ $stats['my_lease']->start_date->format('M d, Y') }}</span>
             </div>
             <div class="flex justify-between text-sm">
-                <span class="text-slate-500">To:</span>
+                <span class="text-slate-500">{{ __('To') }}:</span>
                 <span class="font-medium text-slate-800">{{ $stats['my_lease']->end_date->format('M d, Y') }}</span>
             </div>
             <div class="flex justify-between text-sm">
-                <span class="text-slate-500">Status:</span>
+                <span class="text-slate-500">{{ __('Status') }}:</span>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">{{ ucfirst($stats['my_lease']->status) }}</span>
             </div>
             @else
-            <p class="text-sm text-slate-500">No active lease.</p>
+            <p class="text-sm text-slate-500">{{ __('No active lease.') }}</p>
             @endif
         </div>
     </div>
 </div>
 <div class="card card-hover mb-6">
     <div class="card-header">
-        <h3 class="text-sm font-semibold text-slate-800">Recent Payments</h3>
-        <a href="{{ route('payments.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">View All</a>
+        <h3 class="text-sm font-semibold text-slate-800">{{ __('Recent Payments') }}</h3>
+        <a href="{{ route('payments.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">{{ __('View All') }}</a>
     </div>
     <div class="p-6">
         @if(isset($stats['my_payments']) && $stats['my_payments']->count())
@@ -297,9 +326,9 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-slate-200">
-                        <th class="text-left font-medium text-slate-500 pb-3">Date</th>
-                        <th class="text-left font-medium text-slate-500 pb-3">Amount</th>
-                        <th class="text-left font-medium text-slate-500 pb-3">Status</th>
+                        <th class="text-left font-medium text-slate-500 pb-3">{{ __('Date') }}</th>
+                        <th class="text-left font-medium text-slate-500 pb-3">{{ __('Amount') }}</th>
+                        <th class="text-left font-medium text-slate-500 pb-3">{{ __('Status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -309,7 +338,7 @@
                         <td class="py-3 text-slate-800">${{ number_format($payment->amount, 2) }}</td>
                         <td class="py-3">
                             @if($payment->status === 'paid')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Paid</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">{{ __('Paid') }}</span>
                             @else
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">{{ ucfirst($payment->status) }}</span>
                             @endif
@@ -320,7 +349,7 @@
             </table>
         </div>
         @else
-        <p class="text-sm text-slate-500">No payments yet.</p>
+        <p class="text-sm text-slate-500">{{ __('No payments yet.') }}</p>
         @endif
     </div>
 </div>

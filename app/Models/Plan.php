@@ -12,6 +12,7 @@ class Plan extends Model
         'description',
         'monthly_price',
         'yearly_price',
+        'prices',
         'max_properties',
         'max_units',
         'max_tenants',
@@ -30,6 +31,7 @@ class Plan extends Model
     protected $casts = [
         'monthly_price' => 'decimal:2',
         'yearly_price' => 'decimal:2',
+        'prices' => 'array',
         'max_properties' => 'integer',
         'max_units' => 'integer',
         'max_tenants' => 'integer',
@@ -83,5 +85,49 @@ class Plan extends Model
     public function scopeSorted($query)
     {
         return $query->orderBy('sort_order');
+    }
+
+    public function getPrice(?string $currency = null, string $period = 'monthly'): float
+    {
+        if ($currency && $this->prices && isset($this->prices[$currency][$period])) {
+            return (float) $this->prices[$currency][$period];
+        }
+
+        return $period === 'yearly' ? (float) $this->yearly_price : (float) $this->monthly_price;
+    }
+
+    public function getFormattedPrice(?string $currency = null, string $period = 'monthly'): string
+    {
+        $price = $this->getPrice($currency, $period);
+
+        if (!$currency || $currency === 'USD') {
+            return '$' . number_format($price, 2);
+        }
+
+        $currencyModel = Currency::where('code', $currency)->first();
+        $symbol = $currencyModel?->symbol ?? $currency;
+
+        return $symbol . number_format($price, 2);
+    }
+
+    public function getPricesByCurrency(?string $currency = null): array
+    {
+        if ($currency && $this->prices && isset($this->prices[$currency])) {
+            return $this->prices[$currency];
+        }
+
+        return [
+            'monthly' => (float) $this->monthly_price,
+            'yearly' => (float) $this->yearly_price,
+        ];
+    }
+
+    public function getAvailableCurrencies(): array
+    {
+        if (!$this->prices) {
+            return ['USD'];
+        }
+
+        return array_keys($this->prices);
     }
 }

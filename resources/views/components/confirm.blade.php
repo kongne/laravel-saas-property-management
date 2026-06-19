@@ -1,9 +1,9 @@
 @props([
     'action' => '',
     'method' => 'DELETE',
-    'message' => 'Are you sure?',
+    'message' => __('Are you sure?'),
     'confirmText' => 'Confirm',
-    'cancelText' => 'Cancel',
+    'cancelText' => __('Cancel'),
     'variant' => 'danger',
     'title' => 'Confirm Action',
 ])
@@ -13,7 +13,7 @@
     $messageId = 'confirm-message-'.uniqid();
 @endphp
 
-<div x-data="{ show: false, trapFocus(e) { if (e.key !== 'Tab') return; const focusable = [...this.$el.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex=\"-1\"])')].filter(el => el.offsetParent !== null); if (!focusable.length) return; const first = focusable[0], last = focusable[focusable.length - 1], index = focusable.indexOf(document.activeElement); if (e.shiftKey && index <= 0) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && (index === -1 || index >= focusable.length - 1)) { e.preventDefault(); first.focus(); } } }" class="inline">
+<div x-data="{ show: false, trapFocus(e) { if (e.key !== 'Tab') return; const focusable = [...this.$el.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex=&quot;-1&quot;])')].filter(el => el.offsetParent !== null); if (!focusable.length) return; const first = focusable[0], last = focusable[focusable.length - 1], index = focusable.indexOf(document.activeElement); if (e.shiftKey && index <= 0) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && (index === -1 || index >= focusable.length - 1)) { e.preventDefault(); first.focus(); } } }" class="inline">
     <span @@click="show = true" class="inline cursor-pointer">{{ $slot }}</span>
 
     <div

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -53,6 +55,19 @@ class RegisterController extends Controller
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
+
+        $trialPlan = Plan::where('slug', $request->role === 'landlord' ? 'professional' : 'free')->first();
+        if ($trialPlan) {
+            Subscription::create([
+                'user_id' => $user->id,
+                'plan_id' => $trialPlan->id,
+                'status' => $trialPlan->monthly_price > 0 ? Subscription::STATUS_TRIAL : Subscription::STATUS_ACTIVE,
+                'trial_ends_at' => $trialPlan->monthly_price > 0 ? now()->addDays($trialPlan->trial_days ?: 14) : null,
+                'starts_at' => now(),
+                'ends_at' => $trialPlan->monthly_price > 0 ? null : null,
+                'billing_period' => 'monthly',
+            ]);
+        }
 
         event(new Registered($user));
 

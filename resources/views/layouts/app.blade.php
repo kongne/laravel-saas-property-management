@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ dark: localStorage.getItem('dark') === 'true' || (!localStorage.getItem('dark') && window.matchMedia('(prefers-color-scheme: dark)').matches), sidebarOpen: false, searchOpen: false }" :class="dark ? 'dark' : ''" x-init="localStorage.setItem('dark', dark); $watch('dark', val => localStorage.setItem('dark', val))">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ in_array(app()->getLocale(), ['ar']) ? 'rtl' : 'ltr' }}" x-data="{ dark: localStorage.getItem('dark') === 'true' || (!localStorage.getItem('dark') && window.matchMedia('(prefers-color-scheme: dark)').matches), sidebarOpen: false, searchOpen: false, sidebarCollapsed: false }" :class="dark ? 'dark' : ''" x-init="localStorage.setItem('dark', dark); $watch('dark', val => localStorage.setItem('dark', val))">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -64,65 +64,68 @@
                 </template>
             </div>
             <div class="hidden sm:flex items-center gap-3 px-4 py-2 border-t border-slate-200 text-xs text-slate-400">
-                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-slate-100 rounded border text-[10px]">&uarr;</kbd><kbd class="px-1 py-0.5 bg-slate-100 rounded border text-[10px]">&darr;</kbd> Navigate</span>
+                <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-slate-100 rounded border text-[10px]">&uarr;</kbd><kbd class="px-1 py-0.5 bg-slate-100 rounded border text-[10px]">&darr;</kbd> {{ __('Navigate') }}</span>
                 <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-slate-100 rounded border text-[10px]">&#9166;</kbd> Open</span>
                 <span class="flex items-center gap-1"><kbd class="px-1 py-0.5 bg-slate-100 rounded border text-[10px]">ESC</kbd> Close</span>
             </div>
         </div>
     </div>
 
-    {{-- Sidebar --}}
-    <aside class="fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out shadow-xl" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
+    {{-- Flex layout: sidebar + content side by side on desktop --}}
+    <div class="md:flex md:min-h-screen">
+    <aside class="sidebar-main bg-slate-900 text-white flex flex-col transition-all duration-300 ease-in-out shadow-xl" :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0', sidebarCollapsed ? 'w-16' : 'w-64']">
 
-        <div class="flex items-center justify-between px-4 h-16 border-b border-slate-700/50">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 text-white no-underline group">
-                <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center group-hover:bg-indigo-400 transition-colors">
+        <div class="flex items-center h-16 border-b border-slate-700/50" :class="sidebarCollapsed ? 'justify-center' : 'justify-between px-4'">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 text-white no-underline group" :class="sidebarCollapsed ? 'justify-center w-full' : ''">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center group-hover:bg-indigo-400 transition-colors flex-shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 </div>
-                <div>
+                <div x-show="!sidebarCollapsed">
                     <span class="font-semibold text-base">{{ config('app.name') }}</span>
-                    <span class="block text-[10px] text-indigo-300 uppercase tracking-wider">Management</span>
+                    <span class="block text-[10px] text-indigo-300 uppercase tracking-wider">{{ __('Management') }}</span>
                 </div>
             </a>
-            <button @@click="sidebarOpen = false" class="md:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
+            <button @@click="sidebarOpen = false" x-show="!sidebarCollapsed" class="md:hidden text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
 
         <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-thin">
-            <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="dashboard">Dashboard</x-nav-link>
+            <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="dashboard">{{ __('Dashboard') }}</x-nav-link>
 
             @if(Auth::user()->isAdmin() || Auth::user()->isLandlord())
-            <div class="sidebar-section">Management</div>
-            <x-nav-link href="{{ route('properties.index') }}" :active="request()->routeIs('properties.*')" icon="building">Properties</x-nav-link>
-            <x-nav-link href="{{ route('units.index') }}" :active="request()->routeIs('units.*')" icon="door">Units</x-nav-link>
-            <x-nav-link href="{{ route('tenants.index') }}" :active="request()->routeIs('tenants.*')" icon="people">Tenants</x-nav-link>
-            <x-nav-link href="{{ route('leases.index') }}" :active="request()->routeIs('leases.*')" icon="document">Leases</x-nav-link>
-            <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')" icon="users">Users</x-nav-link>
+            <div x-show="!sidebarCollapsed" class="sidebar-section">{{ __('Management') }}</div>
+            <x-nav-link href="{{ route('properties.index') }}" :active="request()->routeIs('properties.*')" icon="building">{{ __('Properties') }}</x-nav-link>
+            <x-nav-link href="{{ route('units.index') }}" :active="request()->routeIs('units.*')" icon="door">{{ __('Units') }}</x-nav-link>
+            <x-nav-link href="{{ route('tenants.index') }}" :active="request()->routeIs('tenants.*')" icon="people">{{ __('Tenants') }}</x-nav-link>
+            <x-nav-link href="{{ route('leases.index') }}" :active="request()->routeIs('leases.*')" icon="document">{{ __('Leases') }}</x-nav-link>
+            <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')" icon="users">{{ __('Users') }}</x-nav-link>
             @endif
 
-            <div class="sidebar-section">Finance</div>
-            <x-nav-link href="{{ route('payments.index') }}" :active="request()->routeIs('payments.*')" icon="credit-card">Payments</x-nav-link>
+            <div x-show="!sidebarCollapsed" class="sidebar-section">{{ __('Finance') }}</div>
+            <x-nav-link href="{{ route('payments.index') }}" :active="request()->routeIs('payments.*')" icon="credit-card">{{ __('Payments') }}</x-nav-link>
+            <x-nav-link href="{{ route('billing.index') }}" :active="request()->routeIs('billing.*')" icon="currency-dollar">{{ __('Billing') }}</x-nav-link>
 
-            <div class="sidebar-section">Services</div>
-            <x-nav-link href="{{ route('maintenance.index') }}" :active="request()->routeIs('maintenance.*')" icon="tools">Maintenance</x-nav-link>
-            <x-nav-link href="{{ route('notifications.index') }}" :active="request()->routeIs('notifications.*')" icon="bell" :badge="Auth::user()->unreadNotifications->count() > 0 ? Auth::user()->unreadNotifications->count() : null">Notifications</x-nav-link>
+            <div x-show="!sidebarCollapsed" class="sidebar-section">{{ __('Services') }}</div>
+            <x-nav-link href="{{ route('maintenance.index') }}" :active="request()->routeIs('maintenance.*')" icon="tools">{{ __('Maintenance') }}</x-nav-link>
+            <x-nav-link href="{{ route('notifications.index') }}" :active="request()->routeIs('notifications.*')" icon="bell" :badge="Auth::user()->unreadNotifications->count() > 0 ? Auth::user()->unreadNotifications->count() : null">{{ __('Notifications') }}</x-nav-link>
+            <x-nav-link href="{{ route('audit.index') }}" :active="request()->routeIs('audit.*')" icon="clock">{{ __('Audit Log') }}</x-nav-link>
 
-            <div class="sidebar-section">Links</div>
+            <div x-show="!sidebarCollapsed" class="sidebar-section">{{ __('Links') }}</div>
             <a href="{{ route('home') }}" class="sidebar-link sidebar-link-inactive" target="_blank">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                <span class="flex-1">View Website</span>
+                <span x-show="!sidebarCollapsed" class="flex-1">{{ __('View Website') }}</span>
             </a>
         </nav>
 
-        <div class="border-t border-slate-700/50 p-3" x-data="{ open: false }">
-            <button @@click="open = !open" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm">{{ substr(Auth::user()->name, 0, 1) }}</div>
-                <div class="flex-1 text-left min-w-0">
+        <div class="border-t border-slate-700/50 p-3" x-data="{ open: false }" x-effect="sidebarCollapsed && (open = false)">
+            <button @@click="open = !open" class="flex items-center w-full px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" :class="sidebarCollapsed ? 'justify-center' : 'gap-3'">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm flex-shrink-0">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                <div x-show="!sidebarCollapsed" class="flex-1 text-left min-w-0">
                     <div class="text-sm font-medium truncate">{{ Auth::user()->name }}</div>
                     <div class="text-[11px] text-slate-400 truncate">{{ Auth::user()->email }}</div>
                 </div>
-                <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                <svg x-show="!sidebarCollapsed" class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
             <div x-show="open" @@click.away="open = false" x-cloak x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" class="mt-1 py-1 bg-slate-800/80 rounded-lg border border-slate-700/50">
                 <div class="px-3 py-2 text-xs text-slate-400">
@@ -133,11 +136,11 @@
                 </div>
                 <a href="{{ route('profile.security') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors rounded">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    Security
+                    {{ __('Security') }}
                 </a>
                 <a href="{{ route('notifications.index') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors rounded">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                    Notifications
+                    {{ __('Notifications') }}
                     @if(Auth::user()->unreadNotifications->count() > 0)
                     <span class="ml-auto w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ Auth::user()->unreadNotifications->count() }}</span>
                     @endif
@@ -147,27 +150,26 @@
                     @csrf
                     <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-300 hover:text-red-200 hover:bg-slate-700 transition-colors rounded">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        Sign out
+                        {{ __('Sign out') }}
                     </button>
                 </form>
             </div>
         </div>
     </aside>
-    @endauth
 
     {{-- Main Content --}}
-    <div class="flex-1 flex flex-col min-h-screen" @auth md:ml-0 @endauth>
+    <div class="flex-1 flex flex-col min-h-screen">
         @auth
         {{-- Top Header Bar --}}
         <header class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
             <div class="flex items-center justify-between px-4 h-14">
                 <div class="flex items-center gap-3">
-                    <button @@click="sidebarOpen = true" class="md:hidden text-slate-600 hover:text-slate-900 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                    <button @@click="window.innerWidth >= 768 ? (sidebarCollapsed = !sidebarCollapsed) : (sidebarOpen = !sidebarOpen)" class="text-slate-600 hover:text-slate-900 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <button data-global-search @@click="searchOpen = true" class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-slate-400 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors min-w-[240px] border border-slate-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        <span>Search anything...</span>
+                        <span>{{ __('Search anything...') }}</span>
                         <kbd class="ml-auto flex items-center gap-0.5 text-[10px] text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-sm">
                             <span>Ctrl</span><span>K</span>
                         </kbd>
@@ -180,12 +182,14 @@
                     <div x-data="{ open: false }" class="relative">
                         <button @@click="open = !open" @@click.away="open = false" class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span class="hidden sm:inline">{{ app()->getLocale() === 'fr' ? 'FR' : 'EN' }}</span>
+                            <span class="hidden sm:inline">{{ strtoupper(app()->getLocale()) }}</span>
                             <svg class="w-3 h-3" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" class="absolute right-0 mt-1 py-1 w-32 bg-white rounded-lg shadow-lg border border-slate-200 z-50">
-                            <a href="{{ route('locale.switch', 'en') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ app()->getLocale() === 'en' ? 'font-semibold text-indigo-600' : '' }}">English</a>
-                            <a href="{{ route('locale.switch', 'fr') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ app()->getLocale() === 'fr' ? 'font-semibold text-indigo-600' : '' }}">Français</a>
+                            <a href="{{ route('locale.switch', 'en') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ app()->getLocale() === 'en' ? 'font-semibold text-indigo-600' : '' }}">{{ __('English') }}</a>
+                            <a href="{{ route('locale.switch', 'fr') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ app()->getLocale() === 'fr' ? 'font-semibold text-indigo-600' : '' }}">{{ __('French') }}</a>
+                            <a href="{{ route('locale.switch', 'es') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ app()->getLocale() === 'es' ? 'font-semibold text-indigo-600' : '' }}">{{ __('Spanish') }}</a>
+                            <a href="{{ route('locale.switch', 'ar') }}" class="block px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors {{ app()->getLocale() === 'ar' ? 'font-semibold text-indigo-600' : '' }}">{{ __('Arabic') }}</a>
                         </div>
                     </div>
                     <button @@click="dark = !dark" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors" :title="dark ? 'Light mode' : 'Dark mode'">
@@ -219,7 +223,7 @@
             <div x-data="{ show: true }" class="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg shadow-sm" role="alert">
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <strong class="text-sm">Please fix the following errors:</strong>
+                    <strong class="text-sm">{{ __('Please fix the following errors:') }}</strong>
                     <button @@click="show = !show" class="ml-auto text-red-500 dark:text-red-400 hover:text-red-700 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
                         <svg class="w-4 h-4 transition-transform" :class="show ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
@@ -240,12 +244,33 @@
         @auth
         <footer class="border-t border-slate-200 bg-white px-4 md:px-6 lg:px-8 py-3">
             <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-slate-400">
-                <span>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</span>
+                <span>&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('All rights reserved.') }}</span>
                 <span>v1.0</span>
             </div>
         </footer>
         @endauth
     </div>
+    </div>{{-- /md:flex --}}
+    @endauth
+
+    {{-- Scroll to Top --}}
+    <button
+        x-data="{ visible: false }"
+        x-init="window.addEventListener('scroll', () => visible = window.scrollY > 300)"
+        x-show="visible"
+        x-cloak
+        @@click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all flex items-center justify-center"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-4"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-4"
+        aria-label="Scroll to top"
+    >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+    </button>
 
     @stack('scripts')
     @vite('resources/js/app.js')

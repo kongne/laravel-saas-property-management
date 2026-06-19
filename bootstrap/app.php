@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'throttle.login' => \App\Http\Middleware\ThrottleLogin::class,
             'two-factor' => \App\Http\Middleware\RequireTwoFactor::class,
             'sanitize' => \App\Http\Middleware\SanitizeInput::class,
+            'feature' => \App\Http\Middleware\CheckFeatureAccess::class,
         ]);
 
         $middleware->appendToGroup('web', [

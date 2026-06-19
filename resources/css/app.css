@@ -154,3 +154,53 @@
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
     .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: #475569; }
 }
+
+.sidebar-main {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    height: 100vh;
+}
+@media (min-width: 768px) {
+    .sidebar-main {
+        position: sticky !important;
+        top: 0 !important;
+        height: 100vh !important;
+        z-index: auto !important;
+    }
+}
+[dir="rtl"] .sidebar-main {
+    left: auto !important;
+    right: 0 !important;
+}
+[dir="rtl"] .sidebar-main.-translate-x-full {
+    transform: translateX(100%) !important;
+}
+@media (min-width: 768px) {
+    [dir="rtl"] .sidebar-main {
+        left: 0 !important;
+        right: auto !important;
+    }
+}
+[dir="rtl"] .toast-stack {
+    right: auto !important;
+    left: 1rem !important;
+}
+[dir="rtl"] .toast-enter {
+    animation-name: toastInRtl !important;
+}
+[dir="rtl"] .toast-exit {
+    animation-name: toastOutRtl !important;
+}
+@keyframes toastInRtl {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes toastOutRtl {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-100%); opacity: 0; }
+}
+[dir="rtl"] .md\:translate-x-0 {
+    transform: translateX(0) !important;
+}

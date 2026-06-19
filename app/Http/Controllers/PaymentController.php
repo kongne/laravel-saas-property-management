@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Lease;
 use App\Models\Payment;
+use App\Models\ActivityLog;
 use App\Notifications\PaymentReceiptNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,7 +91,9 @@ class PaymentController extends Controller
             $data['status'] = 'partial';
         }
 
-        Payment::create($data);
+        $payment = Payment::create($data);
+
+        ActivityLog::log(Auth::user(), 'payment_created', "Created payment INV-{$payment->invoice_number}");
 
         return redirect()->route('payments.index')
             ->with('success', 'Payment recorded successfully.');
@@ -133,6 +136,8 @@ class PaymentController extends Controller
 
         $payment->update($data);
 
+        ActivityLog::log(Auth::user(), 'payment_updated', "Updated payment INV-{$payment->invoice_number}");
+
         return redirect()->route('payments.index')
             ->with('success', 'Payment updated successfully.');
     }
@@ -141,6 +146,8 @@ class PaymentController extends Controller
     {
         $this->authorizeAccess($payment);
         $payment->delete();
+
+        ActivityLog::log(Auth::user(), 'payment_deleted', "Deleted payment INV-{$payment->invoice_number}");
 
         return redirect()->route('payments.index')
             ->with('success', 'Payment deleted successfully.');

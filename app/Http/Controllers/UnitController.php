@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUnitRequest;
 use App\Models\Property;
 use App\Models\Unit;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,14 +50,20 @@ class UnitController extends Controller
 
     public function store(StoreUnitRequest $request)
     {
+        if (!Auth::user()->isAdmin() && Auth::user()->hasReachedLimit('units')) {
+            return back()->withInput()->with('error', 'You have reached your plan limit for units. Please upgrade to add more.');
+        }
+
         $property = Property::findOrFail($request->property_id);
         if (!Auth::user()->isAdmin() && $property->user_id !== Auth::id()) {
             abort(403);
         }
 
-        Unit::create($request->validated());
+        $unit = Unit::create($request->validated());
 
         $property->increment('total_units');
+
+        ActivityLog::log(Auth::user(), 'unit_created', "Created unit: {$unit->unit_number}");
 
         return redirect()->route('units.index')
             ->with('success', 'Unit created successfully.');
@@ -83,6 +90,8 @@ class UnitController extends Controller
         $this->authorizeAccess($unit);
         $unit->update($request->validated());
 
+        ActivityLog::log(Auth::user(), 'unit_updated', "Updated unit: {$unit->unit_number}");
+
         return redirect()->route('units.index')
             ->with('success', 'Unit updated successfully.');
     }
@@ -97,6 +106,8 @@ class UnitController extends Controller
 
         $unit->property()->decrement('total_units');
         $unit->delete();
+
+        ActivityLog::log(Auth::user(), 'unit_deleted', "Deleted unit: {$unit->unit_number}");
 
         return redirect()->route('units.index')
             ->with('success', 'Unit deleted successfully.');

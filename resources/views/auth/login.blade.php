@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name') }} - Sign In</title>
+    <title>{{ config('app.name') }} - {{ __('Sign In') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -30,14 +30,14 @@
                 </div>
                 <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
                     <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700">
-                        <h4 class="font-bold text-xl text-slate-800 dark:text-slate-100 mb-1">Welcome back</h4>
+                        <h4 class="font-bold text-xl text-slate-800 dark:text-slate-100 mb-1">{{ __('Welcome back') }}</h4>
                         <p class="text-slate-500 dark:text-slate-400 text-sm">Sign in to your account to continue</p>
                     </div>
                     <div class="p-6">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="mb-4">
-                                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Email Address</label>
+                                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Email Address') }}</label>
                                 <input type="email" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autofocus autocomplete="email">
                                 @error('email')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -45,7 +45,7 @@
                             </div>
                             <div class="mb-4">
                                 <div class="flex justify-between items-center">
-                                    <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
+                                    <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Password') }}</label>
                                     <a href="{{ route('password.request') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 underline">Forgot?</a>
                                 </div>
                                 <input type="password" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
@@ -58,7 +58,7 @@
                                 <label class="ml-2 text-sm text-slate-600 dark:text-slate-400" for="remember">Remember me for 30 days</label>
                             </div>
                             <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
-                                Sign In
+                                {{ __('Sign In') }}
                             </button>
                         </form>
 
@@ -83,7 +83,7 @@
                         </div>
 
                         <div class="text-center mt-5">
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Don't have an account? <a href="{{ route('register') }}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800">Create one</a></p>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm">{{ __("Don't have an account?") }} <a href="{{ route('register') }}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800">Create one</a></p>
                         </div>
                     </div>
                 </div>

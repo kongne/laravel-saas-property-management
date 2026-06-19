@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Property')
+@section('title', __('Edit Property'))
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-slate-800">Edit Property</h1>
-    <a href="{{ route('properties.show', $property) }}" class="btn-secondary btn-sm">Cancel</a>
+    <h1 class="text-2xl font-bold text-slate-800">{{ __('Edit Property') }}</h1>
+    <a href="{{ route('properties.show', $property) }}" class="btn-secondary btn-sm">{{ __('Cancel') }}</a>
 </div>
 
-<x-breadcrumbs :items="[['label' => 'Properties', 'url' => route('properties.index')], ['label' => $property->name, 'url' => route('properties.show', $property)], ['label' => 'Edit']]" />
+<x-breadcrumbs :items="[['label' => __('Properties'), 'url' => route('properties.index')], ['label' => $property->name, 'url' => route('properties.show', $property)], ['label' => __('Edit')]]" />
 
 <div class="card">
     <div class="card-header">
@@ -19,17 +19,17 @@
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                 <div class="md:col-span-6">
-                    <x-forms.input name="name" label="Property Name" :value="old('name', $property->name)" required />
+                    <x-forms.input name="name" label="{{ __('Property Name') }}" :value="old('name', $property->name)" required />
                 </div>
                 <div class="md:col-span-3">
-                    <x-forms.select name="type" label="Type" required :options="\App\Models\Property::propertyTypes()" :value="old('type', $property->type)" placeholder="Select type..." />
+                    <x-forms.select name="type" label="{{ __('Type') }}" required :options="\App\Models\Property::propertyTypes()" :value="old('type', $property->type)" placeholder="Select type..." />
                 </div>
                 <div class="md:col-span-3">
-                    <x-forms.select name="status" label="Status" :options="['active' => 'Active', 'inactive' => 'Inactive', 'under_maintenance' => 'Under Maintenance']" :value="old('status', $property->status)" />
+                    <x-forms.select name="status" label="{{ __('Status') }}" :options="['active' => __('Active'), 'inactive' => __('Inactive'), 'under_maintenance' => __('Under Maintenance')]" :value="old('status', $property->status)" />
                 </div>
 
                 <div class="md:col-span-12">
-                    <x-forms.textarea name="description" label="Description" :value="old('description', $property->description)" rows="4" />
+                    <x-forms.textarea name="description" label="{{ __('Description') }}" :value="old('description', $property->description)" rows="4" />
                 </div>
 
                 <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
@@ -37,38 +37,38 @@
                 </div>
 
                 <div class="md:col-span-6">
-                    <x-forms.input name="address" label="Address" :value="old('address', $property->address)" required />
+                    <x-forms.input name="address" label="{{ __('Address') }}" :value="old('address', $property->address)" required />
                 </div>
                 <div class="md:col-span-3">
-                    <x-forms.select name="city" label="City" required :options="\App\Models\Property::cities()" :value="old('city', $property->city)" placeholder="Select city..." x-data @change="const d = document.querySelector('[name=district]'); if(d) { fetch('/api/locations/districts?city='+encodeURIComponent($el.value)).then(r=>r.json()).then(data=>{ d.innerHTML='<option value=\"\">Select district...</option>'+data.map(x=>'<option value=\"'+x+'\">'+x+'</option>').join(''); }).catch(()=>{}); }" />
+                    <x-forms.select name="city" label="{{ __('City') }}" required :options="\App\Models\Property::cities()" :value="old('city', $property->city)" placeholder="Select city..." x-data @change="const d = document.querySelector('[name=district]'); if(d) { fetch('/api/locations/districts?city='+encodeURIComponent($el.value)).then(r=>r.json()).then(data=>{ d.innerHTML='<option value=\"\">Select district...</option>'+data.map(x=>'<option value=\"'+x+'\">'+x+'</option>').join(''); }).catch(()=>{}); }" />
                 </div>
                 <div class="md:col-span-3">
-                    <x-forms.select name="district" label="District" :options="$property->district ? [$property->district => $property->district] : []" :value="old('district', $property->district)" placeholder="Select district..." />
+                    <x-forms.select name="district" label="{{ __('District') }}" :options="$property->district ? [$property->district => $property->district] : []" :value="old('district', $property->district)" placeholder="Select district..." />
                 </div>
 
                 <div class="md:col-span-4">
                     <x-forms.input name="state" label="State/Region" :value="old('state', $property->state)" placeholder="e.g. Littoral" />
                 </div>
                 <div class="md:col-span-4">
-                    <x-forms.input name="country" label="Country" :value="old('country', $property->country ?? 'Cameroon')" />
+                    <x-forms.input name="country" label="{{ __('Country') }}" :value="old('country', $property->country ?? 'Cameroon')" />
                 </div>
                 <div class="md:col-span-4">
                     <x-forms.input name="zip_code" label="Zip/Postal Code" :value="old('zip_code', $property->zip_code)" />
                 </div>
 
                 <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Details</h4>
+                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">{{ __('Details') }}</h4>
                 </div>
 
                 <div class="md:col-span-4">
-                    <x-forms.input name="total_units" label="Total Units" type="number" :value="old('total_units', $property->total_units)" min="1" />
+                    <x-forms.input name="total_units" label="{{ __('Total Units') }}" type="number" :value="old('total_units', $property->total_units)" min="1" />
                 </div>
                 <div class="md:col-span-4">
                     <x-forms.input name="area_sqft" label="Area (sqft)" type="number" :value="old('area_sqft', $property->area_sqft)" step="0.01" min="0" />
                 </div>
 
                 <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Amenities</h4>
+                    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">{{ __('Amenities') }}</h4>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         @foreach(\App\Models\Property::amenityOptions() as $val => $label)
                         @php $checked = in_array($val, old('amenities', $property->amenities ?? [])); @endphp
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="md:col-span-6">
-                    <x-forms.group label="Property Images">
+                    <x-forms.group label="{{ __('Property Images') }}">
                         @if($property->images)
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                             @foreach($property->images as $img)
@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="md:col-span-6 flex items-end">
-                    <x-forms.checkbox name="featured" :checked="old('featured', $property->featured)">Mark as Featured Property</x-forms.checkbox>
+                    <x-forms.checkbox name="featured" :checked="old('featured', $property->featured)">{{ __('Mark as Featured Property') }}</x-forms.checkbox>
                 </div>
 
                 <div class="md:col-span-12 border-t border-slate-200 dark:border-slate-700 pt-4 flex items-center gap-3">
@@ -117,7 +117,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         Update Property
                     </x-forms.button>
-                    <a href="{{ route('properties.show', $property) }}" class="btn-secondary">Cancel</a>
+                    <a href="{{ route('properties.show', $property) }}" class="btn-secondary">{{ __('Cancel') }}</a>
                 </div>
             </div>
         </form>

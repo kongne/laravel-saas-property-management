@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMaintenanceRequest;
 use App\Models\MaintenanceRequest;
+use App\Models\ActivityLog;
 use App\Models\Unit;
 use App\Notifications\MaintenanceUpdatedNotification;
 use Illuminate\Http\Request;
@@ -86,6 +87,8 @@ class MaintenanceController extends Controller
             $request->unit->property->user->notify(new MaintenanceUpdatedNotification($request, 'created'));
         }
 
+        ActivityLog::log(Auth::user(), 'maintenance_created', "Created maintenance: {$request->title}");
+
         return redirect()->route('maintenance.index')
             ->with('success', 'Maintenance request created successfully.');
     }
@@ -117,6 +120,8 @@ class MaintenanceController extends Controller
         $this->authorizeAccess($maintenanceRequest);
         $maintenanceRequest->update($request->validated());
 
+        ActivityLog::log(Auth::user(), 'maintenance_updated', "Updated maintenance: {$maintenanceRequest->title}");
+
         return redirect()->route('maintenance.index')
             ->with('success', 'Maintenance request updated successfully.');
     }
@@ -125,6 +130,8 @@ class MaintenanceController extends Controller
     {
         $this->authorizeAccess($maintenanceRequest);
         $maintenanceRequest->delete();
+
+        ActivityLog::log(Auth::user(), 'maintenance_deleted', "Deleted maintenance: {$maintenanceRequest->title}");
 
         return redirect()->route('maintenance.index')
             ->with('success', 'Maintenance request deleted successfully.');

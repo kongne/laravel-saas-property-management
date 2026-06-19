@@ -1,34 +1,34 @@
 @extends('layouts.app')
 
-@section('title', 'Units')
+@section('title', __('Units'))
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold text-slate-800">Units</h2>
+    <h2 class="text-2xl font-bold text-slate-800">{{ __('Units') }}</h2>
     <a href="{{ route('units.create') }}" class="btn-primary btn-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        Add Unit
+        {{ __('Add Unit') }}
     </a>
 </div>
 
-<x-table title="Units" :headers="['unit' => 'Unit #', 'property' => 'Property', 'type' => 'Type', 'bed_bath' => 'Bed/Bath', 'rent' => 'Rent', 'status' => 'Status', 'actions' => 'Actions']">
+<x-table title="{{ __('Units') }}" :headers="['unit' => __('Unit #'), 'property' => __('Property'), 'type' => __('Type'), 'bed_bath' => __('Bed/Bath'), 'rent' => __('Rent'), 'status' => __('Status'), 'actions' => __('Actions')]">
     <x-slot name="actions">
         <form method="GET" class="flex items-center gap-2 flex-wrap">
             <select name="property_id" class="select !w-40 !py-1.5 !text-xs">
-                <option value="">All Properties</option>
+                <option value="">{{ __('All Properties') }}</option>
                 @foreach($properties as $p)
                     <option value="{{ $p->id }}" {{ request('property_id') == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
                 @endforeach
             </select>
             <select name="status" class="select !w-32 !py-1.5 !text-xs">
-                <option value="">All Status</option>
-                <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>Available</option>
-                <option value="occupied" {{ request('status') === 'occupied' ? 'selected' : '' }}>Occupied</option>
-                <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
-                <option value="reserved" {{ request('status') === 'reserved' ? 'selected' : '' }}>Reserved</option>
+                <option value="">{{ __('All Status') }}</option>
+                <option value="available" {{ request('status') === 'available' ? 'selected' : '' }}>{{ __('Available') }}</option>
+                <option value="occupied" {{ request('status') === 'occupied' ? 'selected' : '' }}>{{ __('Occupied') }}</option>
+                <option value="maintenance" {{ request('status') === 'maintenance' ? 'selected' : '' }}>{{ __('Maintenance') }}</option>
+                <option value="reserved" {{ request('status') === 'reserved' ? 'selected' : '' }}>{{ __('Reserved') }}</option>
             </select>
-            <input type="text" name="search" class="input !w-36 !py-1.5 !text-xs" placeholder="Search..." value="{{ request('search') }}">
-            <button type="submit" class="btn-secondary btn-sm">Filter</button>
+            <input type="text" name="search" class="input !w-36 !py-1.5 !text-xs" placeholder="{{ __('Search...') }}" value="{{ request('search') }}">
+            <button type="submit" class="btn-secondary btn-sm">{{ __('Filter') }}</button>
         </form>
     </x-slot>
     @forelse($units as $unit)
@@ -64,7 +64,7 @@
     @empty
     <tr>
         <td colspan="7" class="px-4 py-12 text-center">
-            <x-empty-state message="No units found." />
+            <x-empty-state :message="__('No units found.')" />
         </td>
     </tr>
     @endforelse

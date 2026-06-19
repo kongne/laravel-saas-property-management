@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePropertyRequest;
+use App\Models\ActivityLog;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +60,10 @@ class PropertyController extends Controller
 
     public function store(StorePropertyRequest $request)
     {
+        if (!Auth::user()->isAdmin() && Auth::user()->hasReachedLimit('properties')) {
+            return back()->withInput()->with('error', 'You have reached your plan limit for properties. Please upgrade to add more.');
+        }
+
         $data = $request->validated();
         $data['user_id'] = Auth::id();
 
@@ -83,6 +88,7 @@ class PropertyController extends Controller
         $data['featured'] = $request->has('featured');
 
         Property::create($data);
+        ActivityLog::log(Auth::user(), 'property_created', "Created property: {$data['name']}");
 
         return redirect()->route('properties.index')
             ->with('success', 'Property created successfully.');
@@ -140,6 +146,7 @@ class PropertyController extends Controller
         $data['featured'] = $request->has('featured');
 
         $property->update($data);
+        ActivityLog::log(Auth::user(), 'property_updated', "Updated property: {$property->name}");
 
         return redirect()->route('properties.index')
             ->with('success', 'Property updated successfully.');
@@ -160,6 +167,7 @@ class PropertyController extends Controller
         }
 
         $property->delete();
+        ActivityLog::log(Auth::user(), 'property_deleted', "Deleted property: {$property->name}");
 
         return redirect()->route('properties.index')
             ->with('success', 'Property deleted successfully.');

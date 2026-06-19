@@ -29,6 +29,7 @@ Route::view('/features', 'home.features')->name('features');
 Route::view('/contact', 'home.contact')->name('contact');
 Route::post('/contact', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/lang/{locale}', [App\Http\Controllers\LocaleController::class, 'switch'])->name('locale.switch');
+Route::get('/currency/{code}', [App\Http\Controllers\CurrencySwitchController::class, 'switch'])->name('currency.switch');
 
 Route::get('/listings', [PublicPropertyController::class, 'index'])->name('listings.index');
 Route::get('/listings/{property}', [PublicPropertyController::class, 'show'])->name('listings.show');
@@ -89,14 +90,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/maintenance/{maintenanceRequest}/resolve', [MaintenanceController::class, 'resolve'])->name('maintenance.resolve');
             Route::post('/maintenance/{maintenanceRequest}/assign', [MaintenanceController::class, 'assign'])->name('maintenance.assign');
 
-            Route::get('/export/payments', [ExportController::class, 'payments'])->name('payments.export');
-            Route::get('/export/leases', [ExportController::class, 'leases'])->name('leases.export');
-            Route::get('/export/tenants', [ExportController::class, 'tenants'])->name('tenants.export');
-            Route::get('/export/properties', [ExportController::class, 'properties'])->name('properties.export');
-            Route::get('/export/maintenance', [ExportController::class, 'maintenance'])->name('maintenance.export');
-            Route::get('/payments/{payment}/receipt-pdf', [ExportController::class, 'paymentPdf'])->name('payments.receipt-pdf');
+            Route::get('/export/payments', [ExportController::class, 'payments'])->name('payments.export')->middleware('feature:export');
+            Route::get('/export/leases', [ExportController::class, 'leases'])->name('leases.export')->middleware('feature:export');
+            Route::get('/export/tenants', [ExportController::class, 'tenants'])->name('tenants.export')->middleware('feature:export');
+            Route::get('/export/properties', [ExportController::class, 'properties'])->name('properties.export')->middleware('feature:export');
+            Route::get('/export/maintenance', [ExportController::class, 'maintenance'])->name('maintenance.export')->middleware('feature:export');
+            Route::get('/payments/{payment}/receipt-pdf', [ExportController::class, 'paymentPdf'])->name('payments.receipt-pdf')->middleware('feature:export');
 
-            Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index');
+            Route::get('/audit', [AuditLogController::class, 'index'])->name('audit.index')->middleware('feature:audit');
 
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
             Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
@@ -114,6 +115,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit')->middleware('role:admin,landlord');
         Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update')->middleware('role:admin,landlord');
         Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy')->middleware('role:admin,landlord');
+
+        Route::get('/billing', [\App\Http\Controllers\Billing\SubscriptionController::class, 'index'])->name('billing.index');
+        Route::post('/billing/change-plan', [\App\Http\Controllers\Billing\SubscriptionController::class, 'changePlan'])->name('billing.change-plan');
+        Route::post('/billing/cancel', [\App\Http\Controllers\Billing\SubscriptionController::class, 'cancel'])->name('billing.cancel');
+        Route::get('/billing/history', [\App\Http\Controllers\Billing\SubscriptionController::class, 'history'])->name('billing.history');
+
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/admin/plans', [\App\Http\Controllers\Billing\PlanAdminController::class, 'index'])->name('admin.plans.index');
+            Route::post('/admin/plans', [\App\Http\Controllers\Billing\PlanAdminController::class, 'store'])->name('admin.plans.store');
+            Route::put('/admin/plans/{plan}', [\App\Http\Controllers\Billing\PlanAdminController::class, 'update'])->name('admin.plans.update');
+            Route::delete('/admin/plans/{plan}', [\App\Http\Controllers\Billing\PlanAdminController::class, 'destroy'])->name('admin.plans.destroy');
+        });
 
         Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
         Route::get('/maintenance/create', [MaintenanceController::class, 'create'])->name('maintenance.create');

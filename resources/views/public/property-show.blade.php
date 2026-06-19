@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <a href="{{ route('home') }}" class="hover:text-indigo-600">Home</a>
+        <a href="{{ route('home') }}" class="hover:text-indigo-600">{{ __('Home') }}</a>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         <a href="{{ route('listings.index') }}" class="hover:text-indigo-600">Listings</a>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -21,7 +21,7 @@
             <div class="absolute top-4 left-4">
                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-amber-400 text-amber-900 shadow-lg">
                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    Featured
+                    {{ __('Featured') }}
                 </span>
             </div>
             @endif
@@ -51,11 +51,11 @@
             <div class="grid grid-cols-3 gap-4 p-4 bg-slate-50 rounded-xl">
                 <div class="text-center">
                     <p class="text-2xl font-bold text-slate-800">{{ $property->total_units ?? 0 }}</p>
-                    <p class="text-xs text-slate-500">Total Units</p>
+                    <p class="text-xs text-slate-500">{{ __('Total Units') }}</p>
                 </div>
                 <div class="text-center">
                     <p class="text-2xl font-bold text-emerald-600">{{ $property->units->count() }}</p>
-                    <p class="text-xs text-slate-500">Available</p>
+                    <p class="text-xs text-slate-500">{{ __('Available') }}</p>
                 </div>
                 <div class="text-center">
                     <p class="text-2xl font-bold text-indigo-600">{{ $property->area_sqft ? number_format($property->area_sqft) : 'N/A' }}</p>
@@ -64,13 +64,13 @@
             </div>
 
             <div>
-                <h2 class="text-lg font-semibold text-slate-800 mb-3">Description</h2>
+                <h2 class="text-lg font-semibold text-slate-800 mb-3">{{ __('Description') }}</h2>
                 <p class="text-sm text-slate-600 leading-relaxed">{{ $property->description ?? 'No description provided.' }}</p>
             </div>
 
             @if($property->amenities)
             <div>
-                <h2 class="text-lg font-semibold text-slate-800 mb-3">Amenities</h2>
+                <h2 class="text-lg font-semibold text-slate-800 mb-3">{{ __('Amenities') }}</h2>
                 <div class="flex flex-wrap gap-2">
                     @foreach($property->amenities as $amenity)
                     @php $options = \App\Models\Property::amenityOptions(); @endphp
@@ -125,11 +125,11 @@
 
                 <div class="space-y-3 text-sm">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-500">Property Type</span>
+                        <span class="text-slate-500">{{ __('Property Type') }}</span>
                         <span class="font-medium text-slate-800">{{ ucfirst($property->type) }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-500">Status</span>
+                        <span class="text-slate-500">{{ __('Status') }}</span>
                         <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">{{ ucfirst($property->status) }}</span>
                     </div>
                     <div class="flex items-center justify-between">

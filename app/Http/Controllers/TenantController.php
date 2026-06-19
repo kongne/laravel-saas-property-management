@@ -6,6 +6,7 @@ use App\Http\Requests\StoreTenantRequest;
 use App\Models\Tenant;
 use App\Models\Unit;
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -53,11 +54,17 @@ class TenantController extends Controller
 
     public function store(StoreTenantRequest $request)
     {
+        if (!Auth::user()->isAdmin() && Auth::user()->hasReachedLimit('tenants')) {
+            return back()->withInput()->with('error', 'You have reached your plan limit for tenants. Please upgrade to add more.');
+        }
+
         $data = $request->validated();
         $tenant = Tenant::create($data);
 
         $unit = Unit::findOrFail($request->unit_id);
         $unit->update(['status' => 'occupied']);
+
+        ActivityLog::log(Auth::user(), 'tenant_created', "Created tenant: {$tenant->user->name}");
 
         return redirect()->route('tenants.index')
             ->with('success', 'Tenant assigned successfully.');
@@ -95,6 +102,8 @@ class TenantController extends Controller
             Unit::find($request->unit_id)->update(['status' => 'occupied']);
         }
 
+        ActivityLog::log(Auth::user(), 'tenant_updated', "Updated tenant: {$tenant->user->name}");
+
         return redirect()->route('tenants.index')
             ->with('success', 'Tenant updated successfully.');
     }
@@ -104,6 +113,8 @@ class TenantController extends Controller
         $this->authorizeAccess($tenant);
         $tenant->unit()->update(['status' => 'available']);
         $tenant->delete();
+
+        ActivityLog::log(Auth::user(), 'tenant_deleted', "Deleted tenant: {$tenant->user->name}");
 
         return redirect()->route('tenants.index')
             ->with('success', 'Tenant removed successfully.');

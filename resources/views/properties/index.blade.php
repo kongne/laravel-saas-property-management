@@ -1,28 +1,32 @@
 @extends('layouts.app')
 
-@section('title', 'Properties')
+@section('title', __('Properties'))
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h2 class="text-2xl font-bold text-slate-800">Properties</h2>
+    <h2 class="text-2xl font-bold text-slate-800">{{ __('Properties') }}</h2>
     <a href="{{ route('properties.create') }}" class="btn-primary btn-sm">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        Add Property
+        {{ __('Add Property') }}
     </a>
 </div>
 
-<x-table title="Properties" :headers="['name' => 'Name', 'type' => 'Type', 'city' => 'City', 'units' => 'Units', 'status' => 'Status', 'actions' => 'Actions']">
+<x-table title="{{ __('Properties') }}" :headers="['name' => __('Name'), 'type' => __('Type'), 'city' => __('City'), 'units' => __('Units'), 'status' => __('Status'), 'actions' => __('Actions')]">
     <x-slot name="actions">
         <form method="GET" class="flex items-center gap-2 flex-wrap">
-            <input type="text" name="search" class="input !w-48 !py-1.5 !text-xs" placeholder="Search..." value="{{ request('search') }}">
+            <input type="text" name="search" class="input !w-48 !py-1.5 !text-xs" placeholder="{{ __('Search...') }}" value="{{ request('search') }}">
             <select name="status" class="select !w-32 !py-1.5 !text-xs">
-                <option value="">All Status</option>
-                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                <option value="under_maintenance" {{ request('status') === 'under_maintenance' ? 'selected' : '' }}>Under Maintenance</option>
+                <option value="">{{ __('All Status') }}</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
+                <option value="under_maintenance" {{ request('status') === 'under_maintenance' ? 'selected' : '' }}>{{ __('Under Maintenance') }}</option>
             </select>
-            <button type="submit" class="btn-secondary btn-sm">Filter</button>
+            <button type="submit" class="btn-secondary btn-sm">{{ __('Filter') }}</button>
         </form>
+        <a href="{{ route('properties.export', request()->query()) }}" class="btn-secondary btn-sm" title="Export CSV">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            {{ __('Export') }}
+        </a>
     </x-slot>
     @forelse($properties as $property)
     <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
@@ -58,7 +62,7 @@
     @empty
     <tr>
         <td colspan="6" class="px-4 py-12 text-center">
-            <x-empty-state message="No properties found." />
+            <x-empty-state :message="__('No properties found.')" />
         </td>
     </tr>
     @endforelse

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name') }} - Two-Factor Authentication</title>
+    <title>{{ config('app.name') }} - {{ __('Two-Factor Authentication') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
@@ -37,7 +37,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
                             </div>
-                            <h4 class="font-bold text-xl text-slate-800 mb-1">Two-Factor Authentication</h4>
+                            <h4 class="font-bold text-xl text-slate-800 mb-1">{{ __('Two-Factor Authentication') }}</h4>
                             <p class="text-slate-500 text-sm">Enter the 6-digit code sent to your email</p>
                         </div>
 

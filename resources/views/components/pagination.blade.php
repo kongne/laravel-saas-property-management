@@ -3,9 +3,9 @@
 @if($paginator->hasPages())
 <nav class="flex items-center justify-between" x-data="{ jump: false }" aria-label="Pagination">
     <p class="text-sm text-slate-500 dark:text-slate-400 hidden sm:block">
-        Showing <span class="font-medium text-slate-700 dark:text-slate-300">{{ $paginator->firstItem() }}</span>
-        to <span class="font-medium text-slate-700 dark:text-slate-300">{{ $paginator->lastItem() }}</span>
-        of <span class="font-medium text-slate-700 dark:text-slate-300">{{ $paginator->total() }}</span> results
+        {{ __('Showing') }} <span class="font-medium text-slate-700 dark:text-slate-300">{{ $paginator->firstItem() }}</span>
+        {{ __('to') }} <span class="font-medium text-slate-700 dark:text-slate-300">{{ $paginator->lastItem() }}</span>
+        {{ __('of') }} <span class="font-medium text-slate-700 dark:text-slate-300">{{ $paginator->total() }}</span> {{ __('results') }}
     </p>
     <p class="text-sm text-slate-500 dark:text-slate-400 sm:hidden">
         {{ $paginator->firstItem() }}-{{ $paginator->lastItem() }} / {{ $paginator->total() }}

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreLeaseRequest;
 use App\Models\Lease;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -63,10 +64,12 @@ class LeaseController extends Controller
         $data = $request->validated();
         $data['user_id'] = Auth::id();
 
-        Lease::create($data);
+        $lease = Lease::create($data);
 
         Unit::find($request->unit_id)->update(['status' => 'occupied']);
         Tenant::find($request->tenant_id)->update(['status' => 'active']);
+
+        ActivityLog::log(Auth::user(), 'lease_created', "Created lease for {$lease->tenant->user->name}");
 
         return redirect()->route('leases.index')
             ->with('success', 'Lease created successfully.');
@@ -94,6 +97,8 @@ class LeaseController extends Controller
         $this->authorizeAccess($lease);
         $lease->update($request->validated());
 
+        ActivityLog::log(Auth::user(), 'lease_updated', "Updated lease #{$lease->id}");
+
         return redirect()->route('leases.index')
             ->with('success', 'Lease updated successfully.');
     }
@@ -107,6 +112,8 @@ class LeaseController extends Controller
         }
 
         $lease->delete();
+
+        ActivityLog::log(Auth::user(), 'lease_deleted', "Deleted lease #{$lease->id}");
 
         return redirect()->route('leases.index')
             ->with('success', 'Lease deleted successfully.');

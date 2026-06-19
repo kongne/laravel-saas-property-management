@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Users')
+@section('title', __('Users'))
 
 @php
     $avatarColors = ['bg-indigo-500', 'bg-emerald-500', 'bg-amber-500', 'bg-sky-500', 'bg-rose-500', 'bg-violet-500', 'bg-cyan-500', 'bg-orange-500'];
@@ -14,7 +14,7 @@
     </svg>
     <p class="text-sm text-amber-700 dark:text-amber-300 flex-1">
         <strong>{{ $neverLoggedIn }}</strong> user(s) have never logged in.
-        <a href="{{ route('users.index', ['status' => 'never']) }}" class="underline font-medium hover:text-amber-800 dark:hover:text-amber-200">View them</a>
+        <a href="{{ route('users.index', ['status' => 'never']) }}" class="underline font-medium hover:text-amber-800 dark:hover:text-amber-200">{{ __('View them') }}</a>
     </p>
 </div>
 @endif
@@ -28,7 +28,7 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Total Users</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('Total Users') }}</p>
                 <p class="text-2xl font-bold text-slate-800 dark:text-slate-200">{{ $totalUsers }}</p>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Active</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('Active') }}</p>
                 <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $activeUsers }}</p>
             </div>
         </div>
@@ -54,7 +54,7 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Inactive</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('Inactive') }}</p>
                 <p class="text-2xl font-bold text-amber-600 dark:text-amber-400">{{ $inactiveUsers }}</p>
             </div>
         </div>
@@ -67,7 +67,7 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Never Logged In</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('Never Logged In') }}</p>
                 <p class="text-2xl font-bold text-slate-600 dark:text-slate-400">{{ $neverLoggedIn }}</p>
             </div>
         </div>
@@ -76,30 +76,30 @@
 
 <div x-data="{ selected: [], selectAll() { this.selected.length === {{ $users->count() }} ? this.selected = [] : this.selected = JSON.parse('{{ $userIdsJson }}'); } }" class="card overflow-hidden">
     <div class="card-header">
-        <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200">Users</h3>
+        <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ __('Users') }}</h3>
         <div class="flex items-center gap-2 flex-wrap">
             <form method="GET" class="flex items-center gap-2 flex-wrap">
                 <input type="text" name="search" class="input !w-28 sm:!w-36 !py-1.5 !text-xs" placeholder="Search..." value="{{ request('search') }}">
                 <select name="role" class="select !w-20 sm:!w-24 !py-1.5 !text-xs">
-                    <option value="">All Roles</option>
-                    <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="landlord" {{ request('role') === 'landlord' ? 'selected' : '' }}>Landlord</option>
-                    <option value="tenant" {{ request('role') === 'tenant' ? 'selected' : '' }}>Tenant</option>
+                    <option value="">{{ __('All Roles') }}</option>
+                    <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>{{ __('Admin') }}</option>
+                    <option value="landlord" {{ request('role') === 'landlord' ? 'selected' : '' }}>{{ __('Landlord') }}</option>
+                    <option value="tenant" {{ request('role') === 'tenant' ? 'selected' : '' }}>{{ __('Tenant') }}</option>
                 </select>
                 <select name="status" class="select !w-24 sm:!w-28 !py-1.5 !text-xs">
-                    <option value="">All Status</option>
-                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                    <option value="never" {{ request('status') === 'never' ? 'selected' : '' }}>Never Logged In</option>
+                    <option value="">{{ __('All Status') }}</option>
+                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ __('Active') }}</option>
+                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ __('Inactive') }}</option>
+                    <option value="never" {{ request('status') === 'never' ? 'selected' : '' }}>{{ __('Never Logged In') }}</option>
                 </select>
                 <input type="date" name="last_login_from" class="input !w-28 !py-1.5 !text-xs" value="{{ request('last_login_from') }}" title="From date">
                 <input type="date" name="last_login_to" class="input !w-28 !py-1.5 !text-xs" value="{{ request('last_login_to') }}" title="To date">
-                <button type="submit" class="btn-secondary btn-sm">Filter</button>
-                <a href="{{ route('users.index') }}" class="btn-secondary btn-sm">Reset</a>
+                <button type="submit" class="btn-secondary btn-sm">{{ __('Filter') }}</button>
+                <a href="{{ route('users.index') }}" class="btn-secondary btn-sm">{{ __('Reset') }}</a>
             </form>
             <a href="{{ route('users.export', request()->query()) }}" class="btn-secondary btn-sm" title="Export CSV">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Export
+                {{ __('Export') }}
             </a>
         </div>
     </div>
@@ -117,7 +117,7 @@
                 </template>
                 <button type="submit" class="btn-danger btn-sm">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-                    Deactivate All
+                    {{ __('Deactivate All') }}
                 </button>
             </form>
             <button @click="selected = []" class="btn-secondary btn-sm">Clear</button>
@@ -131,11 +131,11 @@
                     <th scope="col" class="w-10 px-4 py-3">
                         <input type="checkbox" @click="selectAll()" :checked="selected.length === {{ $users->count() }} && {{ $users->count() }} > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800">
                     </th>
-                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">User</th>
-                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">Role</th>
-                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">Status</th>
-                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">Last Login</th>
-                    <th scope="col" class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">Actions</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ __('User') }}</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ __('Role') }}</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ __('Status') }}</th>
+                    <th scope="col" class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ __('Last Login') }}</th>
+                    <th scope="col" class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ __('Actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -185,12 +185,12 @@
                         @if($user->is_active)
                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-300 dark:shadow-emerald-700"></span>
-                            Active
+                            {{ __('Active') }}
                         </span>
                         @else
                         <span class="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 dark:text-red-400">
                             <span class="w-2 h-2 rounded-full bg-red-500 shadow-sm shadow-red-300 dark:shadow-red-700"></span>
-                            Inactive
+                            {{ __('Inactive') }}
                         </span>
                         @endif
                     </td>
@@ -202,7 +202,7 @@
                         @else
                         <span class="inline-flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 italic">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Never
+                            {{ __('Never') }}
                         </span>
                         @endif
                     </td>
@@ -222,7 +222,7 @@
                                 </button>
                             </form>
                             @if($user->id !== Auth::id())
-                            <x-confirm action="{{ route('users.destroy', $user) }}" method="DELETE" message="Delete this user permanently? This action cannot be undone." confirmText="Delete">
+                            <x-confirm action="{{ route('users.destroy', $user) }}" method="DELETE" message="Delete this user permanently? This action cannot be undone." confirmText="{{ __('Delete') }}">
                                 <button type="button" class="inline-flex items-center justify-center w-8 h-8 text-red-600 dark:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="Delete user">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
@@ -234,7 +234,7 @@
                 @empty
                 <tr>
                     <td colspan="6" class="px-4 py-12 text-center">
-                        <x-empty-state message="No users found." />
+                        <x-empty-state message="{{ __('No users found.') }}" />
                     </td>
                 </tr>
                 @endforelse

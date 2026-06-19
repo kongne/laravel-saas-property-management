@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="theme-color" content="#6366f1">
-    <title>{{ config('app.name') }} - Pricing</title>
+    <title>{{ config('app.name') }} - {{ __('Pricing') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -26,15 +26,15 @@
                     </svg>
                 </button>
                 <div class="hidden lg:flex items-center gap-2" id="mobileMenu">
-                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('home') }}#features">Features</a>
-                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('pricing') }}">Pricing</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('home') }}#features">{{ __('Features') }}</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('pricing') }}">{{ __('Pricing') }}</a>
                     <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('home') }}#testimonials">Testimonials</a>
-                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('contact') }}">Contact</a>
+                    <a class="px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white no-underline rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800" href="{{ route('contact') }}">{{ __('Contact Us') }}</a>
                     @guest
-                        <a class="border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-4 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-medium text-sm ml-3 no-underline" href="{{ route('login') }}">Sign In</a>
-                        <a class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm no-underline" href="{{ route('register') }}">Get Started</a>
+                        <a class="border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-4 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-medium text-sm ml-3 no-underline" href="{{ route('login') }}">{{ __('Sign In') }}</a>
+                        <a class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm no-underline" href="{{ route('register') }}">{{ __('Get Started') }}</a>
                     @else
-                        <a class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm ml-3 no-underline" href="{{ route('dashboard') }}">Dashboard</a>
+                        <a class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm ml-3 no-underline" href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                     @endguest
                 </div>
             </div>
@@ -174,8 +174,8 @@
                 <div>
                     <h6 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Product</h6>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('home') }}#features" class="text-slate-400 hover:text-white no-underline">Features</a></li>
-                        <li><a href="{{ route('pricing') }}" class="text-slate-400 hover:text-white no-underline">Pricing</a></li>
+                        <li><a href="{{ route('home') }}#features" class="text-slate-400 hover:text-white no-underline">{{ __('Features') }}</a></li>
+                        <li><a href="{{ route('pricing') }}" class="text-slate-400 hover:text-white no-underline">{{ __('Pricing') }}</a></li>
                         <li><a href="{{ route('register') }}" class="text-slate-400 hover:text-white no-underline">Sign Up</a></li>
                     </ul>
                 </div>
@@ -184,7 +184,7 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" class="text-slate-400 hover:text-white no-underline">About</a></li>
                         <li><a href="#" class="text-slate-400 hover:text-white no-underline">Blog</a></li>
-                        <li><a href="{{ route('contact') }}" class="text-slate-400 hover:text-white no-underline">Contact</a></li>
+                        <li><a href="{{ route('contact') }}" class="text-slate-400 hover:text-white no-underline">{{ __('Contact Us') }}</a></li>
                     </ul>
                 </div>
                 <div>
@@ -192,7 +192,7 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" class="text-slate-400 hover:text-white no-underline">Privacy</a></li>
                         <li><a href="#" class="text-slate-400 hover:text-white no-underline">Terms</a></li>
-                        <li><a href="#" class="text-slate-400 hover:text-white no-underline">Security</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-white no-underline">{{ __('Security') }}</a></li>
                     </ul>
                 </div>
                 <div>
@@ -200,12 +200,12 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" class="text-slate-400 hover:text-white no-underline">Documentation</a></li>
                         <li><a href="#" class="text-slate-400 hover:text-white no-underline">FAQ</a></li>
-                        <li><a href="mailto:support@propertymanager.com" class="text-slate-400 hover:text-white no-underline">Email</a></li>
+                        <li><a href="mailto:support@propertymanager.com" class="text-slate-400 hover:text-white no-underline">{{ __('Email') }}</a></li>
                     </ul>
                 </div>
             </div>
             <hr class="my-5 border-slate-700 opacity-50">
-            <div class="text-center text-xs text-slate-500">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</div>
+            <div class="text-center text-xs text-slate-500">&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('All rights reserved.') }}</div>
         </div>
     </footer>
 </body>

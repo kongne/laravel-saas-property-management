@@ -45,12 +45,12 @@
                             @csrf
                             <div class="space-y-4">
                                 <div>
-                                    <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Full Name</label>
+                                    <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Full Name') }}</label>
                                     <input type="text" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('name') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="John Doe" required autofocus autocomplete="name">
                                     @error('name')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                                 </div>
                                 <div>
-                                    <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Email Address</label>
+                                    <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Email Address') }}</label>
                                     <input type="email" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autocomplete="email">
                                     @error('email')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                                 </div>
@@ -61,12 +61,12 @@
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
+                                        <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Password') }}</label>
                                         <input type="password" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="password" name="password" placeholder="Create a strong password" required autocomplete="new-password">
                                         @error('password')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                                     </div>
                                     <div>
-                                        <label for="password_confirmation" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Confirm Password</label>
+                                        <label for="password_confirmation" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">{{ __('Confirm Password') }}</label>
                                         <input type="password" class="w-full px-3 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="password_confirmation" name="password_confirmation" placeholder="Repeat password" required autocomplete="new-password">
                                     </div>
                                 </div>
@@ -95,13 +95,13 @@
                                         <div class="flex items-start">
                                             <input type="radio" name="role" id="roleLandlord" value="landlord" class="h-4 w-4 mt-1 border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800" {{ old('role', 'landlord') === 'landlord' ? 'checked' : '' }}>
                                             <label class="ml-2" for="roleLandlord">
-                                                <strong class="text-sm text-slate-800 dark:text-slate-200">Landlord</strong><br><span class="text-xs text-slate-500 dark:text-slate-400">Manage properties and tenants</span>
+                                                <strong class="text-sm text-slate-800 dark:text-slate-200">{{ __('Landlord') }}</strong><br><span class="text-xs text-slate-500 dark:text-slate-400">Manage properties and tenants</span>
                                             </label>
                                         </div>
                                         <div class="flex items-start">
                                             <input type="radio" name="role" id="roleTenant" value="tenant" class="h-4 w-4 mt-1 border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-800" {{ old('role') === 'tenant' ? 'checked' : '' }}>
                                             <label class="ml-2" for="roleTenant">
-                                                <strong class="text-sm text-slate-800 dark:text-slate-200">Tenant</strong><br><span class="text-xs text-slate-500 dark:text-slate-400">View lease and pay rent</span>
+                                                <strong class="text-sm text-slate-800 dark:text-slate-200">{{ __('Tenant') }}</strong><br><span class="text-xs text-slate-500 dark:text-slate-400">View lease and pay rent</span>
                                             </label>
                                         </div>
                                     </div>
@@ -125,7 +125,7 @@
                             </div>
                         </form>
                         <div class="text-center mt-5">
-                            <p class="text-slate-500 dark:text-slate-400 text-sm">Already have an account? <a href="{{ route('login') }}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800">Sign in</a></p>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm">{{ __('Already have an account?') }} <a href="{{ route('login') }}" class="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800">Sign in</a></p>
                         </div>
                     </div>
                 </div>

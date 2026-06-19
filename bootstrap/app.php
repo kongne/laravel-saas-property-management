@@ -17,10 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'throttle.login' => \App\Http\Middleware\ThrottleLogin::class,
             'two-factor' => \App\Http\Middleware\RequireTwoFactor::class,
+            'sanitize' => \App\Http\Middleware\SanitizeInput::class,
         ]);
 
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\SanitizeInput::class,
         ]);
 
         $middleware->appendToGroup('api', [

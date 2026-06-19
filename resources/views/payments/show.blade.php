@@ -1,47 +1,60 @@
 @extends('layouts.app')
 @section('title', 'Payment '.$payment->invoice_number)
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Payment {{ $payment->invoice_number }}</h2>
-    <div>
-        <a href="{{ route('payments.receipt', $payment) }}" class="btn btn-secondary"><i class="bi bi-receipt"></i> Receipt</a>
-        <a href="{{ route('payments.edit', $payment) }}" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
-        <a href="{{ route('payments.index') }}" class="btn btn-outline-secondary">Back</a>
+<div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-slate-800">Payment {{ $payment->invoice_number }}</h2>
+    <div class="flex gap-2">
+        <a href="{{ route('payments.receipt', $payment) }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300 inline-flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Receipt
+        </a>
+        <a href="{{ route('payments.edit', $payment) }}" class="bg-amber-400 text-white px-4 py-2 rounded-lg hover:bg-amber-500 transition-colors font-medium text-sm inline-flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Edit
+        </a>
+        <a href="{{ route('payments.index') }}" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors font-medium text-sm border border-slate-300">Back</a>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header"><h5 class="mb-0">Payment Details</h5></div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3"><strong>Invoice:</strong> {{ $payment->invoice_number }}</div>
-                    <div class="col-md-6 mb-3"><strong>Status:</strong> <span class="badge bg-{{ $payment->status === 'paid' ? 'success' : 'warning' }}">{{ ucfirst($payment->status) }}</span></div>
-                    <div class="col-md-6 mb-3"><strong>Tenant:</strong> {{ $payment->tenant->user->name ?? 'N/A' }}</div>
-                    <div class="col-md-6 mb-3"><strong>Unit:</strong> {{ $payment->unit->unit_number ?? 'N/A' }}</div>
-                    <div class="col-md-4 mb-3"><strong>Amount:</strong> ${{ number_format($payment->amount, 2) }}</div>
-                    <div class="col-md-4 mb-3"><strong>Paid:</strong> ${{ number_format($payment->paid_amount ?? 0, 2) }}</div>
-                    <div class="col-md-4 mb-3"><strong>Balance:</strong> ${{ number_format($payment->balance, 2) }}</div>
-                    <div class="col-md-4 mb-3"><strong>Late Fee:</strong> ${{ number_format($payment->late_fee, 2) }}</div>
-                    <div class="col-md-4 mb-3"><strong>Due Date:</strong> {{ $payment->due_date->format('M d, Y') }}</div>
-                    <div class="col-md-4 mb-3"><strong>Paid Date:</strong> {{ $payment->paid_date ? $payment->paid_date->format('M d, Y') : 'N/A' }}</div>
-                    <div class="col-md-4 mb-3"><strong>Method:</strong> {{ $payment->payment_method ? ucfirst(str_replace('_',' ',$payment->payment_method)) : 'N/A' }}</div>
-                    <div class="col-md-4 mb-3"><strong>Mobile Money #:</strong> {{ $payment->mobile_money_number ?? 'N/A' }}</div>
-                    <div class="col-md-4 mb-3"><strong>Reference:</strong> {{ $payment->transaction_reference ?? 'N/A' }}</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h5 class="text-lg font-semibold text-slate-800">Payment Details</h5>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><strong>Invoice:</strong> {{ $payment->invoice_number }}</div>
+                    <div><strong>Status:</strong> <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full {{ $payment->status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">{{ ucfirst($payment->status) }}</span></div>
+                    <div><strong>Tenant:</strong> {{ $payment->tenant->user->name ?? 'N/A' }}</div>
+                    <div><strong>Unit:</strong> {{ $payment->unit->unit_number ?? 'N/A' }}</div>
+                    <div><strong>Amount:</strong> ${{ number_format($payment->amount, 2) }}</div>
+                    <div><strong>Paid:</strong> ${{ number_format($payment->paid_amount ?? 0, 2) }}</div>
+                    <div><strong>Balance:</strong> ${{ number_format($payment->balance, 2) }}</div>
+                    <div><strong>Late Fee:</strong> ${{ number_format($payment->late_fee, 2) }}</div>
+                    <div><strong>Due Date:</strong> {{ $payment->due_date->format('M d, Y') }}</div>
+                    <div><strong>Paid Date:</strong> {{ $payment->paid_date ? $payment->paid_date->format('M d, Y') : 'N/A' }}</div>
+                    <div><strong>Method:</strong> {{ $payment->payment_method ? ucfirst(str_replace('_',' ',$payment->payment_method)) : 'N/A' }}</div>
+                    <div><strong>Mobile Money #:</strong> {{ $payment->mobile_money_number ?? 'N/A' }}</div>
+                    <div><strong>Reference:</strong> {{ $payment->transaction_reference ?? 'N/A' }}</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div>
         @if($payment->status !== 'paid')
-        <div class="card">
-            <div class="card-header"><h5 class="mb-0">Mark as Paid</h5></div>
-            <div class="card-body">
-                <form action="{{ route('payments.mark-as-paid', $payment) }}" method="POST">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+            <div class="px-6 py-4 border-b border-slate-200">
+                <h5 class="text-lg font-semibold text-slate-800">Mark as Paid</h5>
+            </div>
+            <div class="p-6">
+                <form action="{{ route('payments.mark-as-paid', $payment) }}" method="POST" class="space-y-3">
                     @csrf
-                    <div class="mb-2"><label class="form-label">Amount Paid</label><input type="number" name="paid_amount" class="form-control" value="{{ $payment->amount }}" step="0.01" required></div>
-                    <div class="mb-2">
-                        <select name="payment_method" class="form-select" id="payMethod">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Amount Paid</label>
+                        <input type="number" name="paid_amount" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" value="{{ $payment->amount }}" step="0.01" required>
+                    </div>
+                    <div>
+                        <select name="payment_method" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" id="payMethod">
                             <option value="">Method</option>
                             <option value="cash">Cash</option>
                             <option value="check">Check</option>
@@ -52,9 +65,9 @@
                             <option value="mtn_money">MTN Money</option>
                         </select>
                     </div>
-                    <div class="mb-2" id="mobilePayField" style="display:none"><input type="text" name="mobile_money_number" class="form-control" placeholder="Mobile money number"></div>
-                    <div class="mb-2"><input type="text" name="transaction_reference" class="form-control" placeholder="Reference"></div>
-                    <button class="btn btn-success w-100">Mark as Paid</button>
+                    <div id="mobilePayField" style="display:none"><input type="text" name="mobile_money_number" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" placeholder="Mobile money number"></div>
+                    <div><input type="text" name="transaction_reference" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" placeholder="Reference"></div>
+                    <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium text-sm w-full">Mark as Paid</button>
                     <script>document.getElementById('payMethod').addEventListener('change',function(){document.getElementById('mobilePayField').style.display=this.value==='orange_money'||this.value==='mtn_money'?'block':'none';});</script>
                 </form>
             </div>

@@ -3,70 +3,89 @@
 @section('title', 'Properties')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Properties</h2>
-    <a href="{{ route('properties.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Property</a>
+<div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-slate-800">Properties</h2>
+    <a href="{{ route('properties.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm inline-flex items-center">
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Property
+    </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <form method="GET" class="row g-3 mb-3">
-            <div class="col-md-4">
-                <input type="text" name="search" class="form-control" placeholder="Search by name, city, address..." value="{{ request('search') }}">
+<div class="bg-white rounded-xl shadow-sm border border-slate-200">
+    <div class="p-6">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-4">
+            <div class="md:col-span-4">
+                <input type="text" name="search" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Search by name, city, address..." value="{{ request('search') }}">
             </div>
-            <div class="col-md-3">
-                <select name="status" class="form-select">
+            <div class="md:col-span-3">
+                <select name="status" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="">All Status</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
                     <option value="under_maintenance" {{ request('status') === 'under_maintenance' ? 'selected' : '' }}>Under Maintenance</option>
                 </select>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-outline-secondary w-100">Filter</button>
+            <div class="md:col-span-2">
+                <button type="submit" class="w-full px-2.5 py-1.5 text-xs font-medium text-slate-600 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">Filter</button>
             </div>
         </form>
 
-        <div class="table-responsive">
-            <table class="table table-hover">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>City</th>
-                        <th>Units</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                    <tr class="bg-slate-50">
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Type</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">City</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Units</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($properties as $property)
-                    <tr>
-                        <td><a href="{{ route('properties.show', $property) }}">{{ $property->name }}</a></td>
-                        <td>{{ ucfirst($property->type) }}</td>
-                        <td>{{ $property->city }}</td>
-                        <td>{{ $property->units_count ?? $property->units->count() }}</td>
-                        <td>
-                            <span class="badge bg-{{ $property->status === 'active' ? 'success' : ($property->status === 'inactive' ? 'secondary' : 'warning') }}">
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600"><a href="{{ route('properties.show', $property) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">{{ $property->name }}</a></td>
+                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600">{{ ucfirst($property->type) }}</td>
+                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600">{{ $property->city }}</td>
+                        <td class="px-4 py-3 border-t border-slate-100 text-slate-600">{{ $property->units_count ?? $property->units->count() }}</td>
+                        <td class="px-4 py-3 border-t border-slate-100">
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full {{
+                                $property->status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                                ($property->status === 'inactive' ? 'bg-slate-100 text-slate-700' :
+                                'bg-amber-100 text-amber-700')
+                            }}">
                                 {{ ucfirst(str_replace('_', ' ', $property->status)) }}
                             </span>
                         </td>
-                        <td>
-                            <a href="{{ route('properties.show', $property) }}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>
-                            <a href="{{ route('properties.edit', $property) }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                            <form action="{{ route('properties.destroy', $property) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
-                            </form>
+                        <td class="px-4 py-3 border-t border-slate-100">
+                            <div class="flex items-center gap-1">
+                                <a href="{{ route('properties.show', $property) }}" class="inline-flex items-center justify-center w-8 h-8 text-sky-600 rounded-md hover:bg-sky-50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </a>
+                                <a href="{{ route('properties.edit', $property) }}" class="inline-flex items-center justify-center w-8 h-8 text-amber-600 rounded-md hover:bg-amber-50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </a>
+                                <form action="{{ route('properties.destroy', $property) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?')">
+                                    @csrf @method('DELETE')
+                                    <button class="inline-flex items-center justify-center w-8 h-8 text-red-600 rounded-md hover:bg-red-50 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="6" class="text-center text-muted">No properties found.</td></tr>
+                    <tr>
+                        <td colspan="6" class="px-4 py-3 text-center text-slate-500 border-t border-slate-100">No properties found.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        {{ $properties->links() }}
+        <div class="mt-4">
+            {{ $properties->links() }}
+        </div>
     </div>
 </div>
 @endsection

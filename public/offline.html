@@ -3,29 +3,30 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>You're Offline - PropertyManager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Offline - Property Management</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .offline-card { text-align: center; max-width: 400px; }
-        .icon-wifi { width: 80px; height: 80px; background: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif; background: #f1f5f9; color: #1e293b; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 48px 32px; text-align: center; max-width: 400px; width: 100%; }
+        .icon { width: 80px; height: 80px; background: #e2e8f0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+        .icon svg { width: 40px; height: 40px; color: #64748b; }
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        p { color: #64748b; margin-bottom: 24px; line-height: 1.5; }
+        .btn { display: inline-block; background: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; border: none; cursor: pointer; }
+        .btn:hover { background: #4338ca; }
     </style>
 </head>
 <body>
-    <div class="offline-card">
-        <div class="icon-wifi">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6c757d" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="#6c757d"/></svg>
+    <div class="card">
+        <div class="icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m-2.829-2.829a5 5 0 000-7.07m-4.243 4.243a1 1 0 010-1.414"/>
+                <circle cx="12" cy="12" r="1" fill="currentColor"/>
+            </svg>
         </div>
-        <h2 class="fw-bold mb-2">You're Offline</h2>
-        <p class="text-muted mb-4">Please check your internet connection and try again.</p>
-        <button onclick="window.location.reload()" class="btn btn-primary px-4 py-2 rounded-pill">Try Again</button>
-        <div class="mt-4 small text-muted">
-            <p>Some features may still be available offline:</p>
-            <ul class="list-unstyled">
-                <li class="mb-1">✓ Previously viewed pages</li>
-                <li class="mb-1">✓ Cached dashboard data</li>
-            </ul>
-        </div>
+        <h1>You're Offline</h1>
+        <p>Please check your internet connection and try again. Some features may be unavailable.</p>
+        <button onclick="location.reload()" class="btn">Try Again</button>
     </div>
 </body>
 </html>

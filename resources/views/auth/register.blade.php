@@ -5,126 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }} - Create Account</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f4f6f9 0%, #e9ecef 100%); min-height: 100vh; display: flex; align-items: center; }
-        .auth-card { border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
-        .auth-header { padding: 2rem 2rem 0; }
-        .auth-body { padding: 2rem; }
-        .btn-auth { padding: 12px 20px; border-radius: 12px; font-weight: 600; }
-        .form-control { border-radius: 10px; padding: 12px 16px; border: 2px solid #e9ecef; transition: all 0.2s; }
-        .form-control:focus { border-color: #0d6efd; box-shadow: 0 0 0 4px rgba(13,110,253,0.1); }
-        .brand-icon { width: 48px; height: 48px; background: #0d6efd; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-        .password-hint { font-size: 0.75rem; }
         .password-checklist { list-style: none; padding: 0; margin: 0.5rem 0 0; font-size: 0.75rem; }
-        .password-checklist li { margin-bottom: 0.25rem; color: #6c757d; }
-        .password-checklist li.valid { color: #198754; }
-        .password-checklist li.invalid { color: #dc3545; }
+        .password-checklist li { margin-bottom: 0.25rem; color: #64748b; }
+        .password-checklist li.valid { color: #059669; }
+        .password-checklist li.invalid { color: #dc2626; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-center">
+            <div class="w-full max-w-lg">
                 <div class="text-center mb-4">
-                    <a href="/" class="text-decoration-none">
-                        <div class="d-inline-flex align-items-center gap-2">
-                            <div class="brand-icon"><i class="bi bi-building fs-4 text-white"></i></div>
-                            <span class="fs-4 fw-bold text-dark">{{ config('app.name') }}</span>
+                    <a href="/" class="no-underline">
+                        <div class="inline-flex items-center gap-2">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-xl inline-flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                </svg>
+                            </div>
+                            <span class="text-2xl font-bold text-slate-900">{{ config('app.name') }}</span>
                         </div>
                     </a>
                 </div>
-                <div class="card auth-card">
-                    <div class="auth-header">
-                        <h4 class="fw-bold mb-1">Create your account</h4>
-                        <p class="text-muted mb-0">Start managing your properties in minutes</p>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+                    <div class="px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-xl text-slate-800 mb-1">Create your account</h4>
+                        <p class="text-slate-500 text-sm">Start managing your properties in minutes</p>
                     </div>
-                    <div class="auth-body">
+                    <div class="p-6">
                         <form method="POST" action="{{ route('register') }}" id="registerForm">
                             @csrf
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label for="name" class="form-label fw-medium small text-uppercase text-muted">Full Name</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="John Doe" required autofocus autocomplete="name">
-                                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Full Name</label>
+                                    <input type="text" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('name') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="name" name="name" value="{{ old('name') }}" placeholder="John Doe" required autofocus autocomplete="name">
+                                    @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
-                                <div class="col-12">
-                                    <label for="email" class="form-label fw-medium small text-uppercase text-muted">Email Address</label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autocomplete="email">
-                                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div>
+                                    <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Email Address</label>
+                                    <input type="email" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required autocomplete="email">
+                                    @error('email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
-                                <div class="col-12">
-                                    <label for="phone" class="form-label fw-medium small text-uppercase text-muted">Phone (optional)</label>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="+1 (555) 000-0000">
-                                    @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div>
+                                    <label for="phone" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Phone (optional)</label>
+                                    <input type="text" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('phone') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="phone" name="phone" value="{{ old('phone') }}" placeholder="+1 (555) 000-0000">
+                                    @error('phone')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="password" class="form-label fw-medium small text-uppercase text-muted">Password</label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Create a strong password" required autocomplete="new-password">
-                                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Password</label>
+                                        <input type="password" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500 @enderror" id="password" name="password" placeholder="Create a strong password" required autocomplete="new-password">
+                                        @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div>
+                                        <label for="password_confirmation" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Confirm Password</label>
+                                        <input type="password" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="password_confirmation" name="password_confirmation" placeholder="Repeat password" required autocomplete="new-password">
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="password_confirmation" class="form-label fw-medium small text-uppercase text-muted">Confirm Password</label>
-                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Repeat password" required autocomplete="new-password">
-                                </div>
-                                <div class="col-12">
+                                <div>
                                     <ul class="password-checklist" id="passwordChecklist">
-                                        <li id="checkLength"><i class="bi bi-circle me-1"></i>At least 12 characters</li>
-                                        <li id="checkUpper"><i class="bi bi-circle me-1"></i>One uppercase letter</li>
-                                        <li id="checkLower"><i class="bi bi-circle me-1"></i>One lowercase letter</li>
-                                        <li id="checkNumber"><i class="bi bi-circle me-1"></i>One number</li>
-                                        <li id="checkSymbol"><i class="bi bi-circle me-1"></i>One special character</li>
+                                        <li id="checkLength">
+                                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>At least 12 characters
+                                        </li>
+                                        <li id="checkUpper">
+                                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>One uppercase letter
+                                        </li>
+                                        <li id="checkLower">
+                                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>One lowercase letter
+                                        </li>
+                                        <li id="checkNumber">
+                                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>One number
+                                        </li>
+                                        <li id="checkSymbol">
+                                            <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>One special character
+                                        </li>
                                     </ul>
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-medium small text-uppercase text-muted">I want to register as</label>
-                                    <div class="d-flex gap-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="role" id="roleLandlord" value="landlord" {{ old('role', 'landlord') === 'landlord' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="roleLandlord">
-                                                <strong>Landlord</strong><br><small class="text-muted">Manage properties and tenants</small>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">I want to register as</label>
+                                    <div class="flex gap-4">
+                                        <div class="flex items-start">
+                                            <input type="radio" name="role" id="roleLandlord" value="landlord" class="h-4 w-4 mt-1 border-slate-300 text-indigo-600 focus:ring-indigo-500" {{ old('role', 'landlord') === 'landlord' ? 'checked' : '' }}>
+                                            <label class="ml-2" for="roleLandlord">
+                                                <strong class="text-sm text-slate-800">Landlord</strong><br><span class="text-xs text-slate-500">Manage properties and tenants</span>
                                             </label>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="role" id="roleTenant" value="tenant" {{ old('role') === 'tenant' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="roleTenant">
-                                                <strong>Tenant</strong><br><small class="text-muted">View lease and pay rent</small>
+                                        <div class="flex items-start">
+                                            <input type="radio" name="role" id="roleTenant" value="tenant" class="h-4 w-4 mt-1 border-slate-300 text-indigo-600 focus:ring-indigo-500" {{ old('role') === 'tenant' ? 'checked' : '' }}>
+                                            <label class="ml-2" for="roleTenant">
+                                                <strong class="text-sm text-slate-800">Tenant</strong><br><span class="text-xs text-slate-500">View lease and pay rent</span>
                                             </label>
                                         </div>
                                     </div>
-                                    @error('role')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                                    @error('role')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input @error('agree_terms') is-invalid @enderror" id="agree_terms" name="agree_terms" value="1">
-                                        <label class="form-check-label small" for="agree_terms">I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a></label>
-                                        @error('agree_terms')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <div>
+                                    <div class="flex items-start">
+                                        <input type="checkbox" class="h-4 w-4 mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 @error('agree_terms') border-red-300 @enderror" id="agree_terms" name="agree_terms" value="1">
+                                        <label class="ml-2 text-sm text-slate-600" for="agree_terms">I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-800 underline">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-800 underline">Privacy Policy</a></label>
                                     </div>
+                                    @error('agree_terms')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
-                                <div class="col-12 mt-3">
-                                    <button type="submit" class="btn btn-primary w-100 btn-auth">Create Account <i class="bi bi-arrow-right ms-2"></i></button>
+                                <div class="pt-2">
+                                    <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2">
+                                        Create Account
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                         </form>
-                        <div class="text-center mt-4">
-                            <p class="text-muted small mb-0">Already have an account? <a href="{{ route('login') }}" class="fw-semibold">Sign in</a></p>
+                        <div class="text-center mt-5">
+                            <p class="text-slate-500 text-sm">Already have an account? <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-800">Sign in</a></p>
                         </div>
                     </div>
                 </div>
-                <p class="text-center text-muted small mt-4">
-                    <a href="/" class="text-muted text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to home</a>
+                <p class="text-center text-slate-500 text-xs mt-5">
+                    <a href="/" class="text-slate-500 no-underline hover:text-slate-700">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
+                        </svg>Back to home
+                    </a>
                 </p>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.querySelectorAll('form').forEach(function(f) { f.addEventListener('submit', function(e) { var btn = this.querySelector('[type="submit"]'); if(btn) { btn.classList.add('btn-loading'); btn.disabled = true; } }); });
+        document.querySelectorAll('form').forEach(function(f) { f.addEventListener('submit', function(e) { var btn = this.querySelector('[type="submit"]'); if(btn) { btn.classList.add('opacity-75', 'cursor-not-allowed'); btn.disabled = true; } }); });
         document.getElementById('password')?.addEventListener('input', function() {
             var v = this.value;
-            function check(id, test) { var el = document.getElementById(id); if(!el) return; var ok = test(v); el.className = ok ? 'valid' : 'invalid'; el.innerHTML = (ok ? '<i class="bi bi-check-circle-fill me-1"></i>' : '<i class="bi bi-circle me-1"></i>') + el.textContent.trim().replace(/[^a-zA-Z0-9 .]/g, '').trim(); }
+            function check(id, test) {
+                var el = document.getElementById(id);
+                if(!el) return;
+                var ok = test(v);
+                el.className = ok ? 'valid' : 'invalid';
+                var text = el.textContent.trim().replace(/[^a-zA-Z0-9 .]/g, '').trim();
+                el.innerHTML = (ok
+                    ? '<svg class="w-3 h-3 inline mr-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+                    : '<svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>') + text;
+            }
             check('checkLength', function(v){return v.length >= 12;});
             check('checkUpper', function(v){return /[A-Z]/.test(v);});
             check('checkLower', function(v){return /[a-z]/.test(v);});

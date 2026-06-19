@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ sidebarOpen: false }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#0d6efd">
+    <meta name="theme-color" content="#1e293b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
@@ -14,228 +14,161 @@
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
-    <title>{{ config('app.name') }} - @yield('title')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @vite('resources/css/app.css')
     @stack('styles')
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f4f6f9; }
-        .sidebar { width: 250px; min-height: 100vh; transition: transform 0.3s ease; }
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; z-index: 1050; transform: translateX(-100%); }
-            .sidebar.show { transform: translateX(0); }
-            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1049; }
-            .sidebar-overlay.show { display: block; }
-            .main-content { margin-left: 0 !important; }
-        }
-        .sidebar .nav-link { border-radius: 8px; margin-bottom: 2px; padding: 10px 16px; transition: all 0.2s; }
-        .sidebar .nav-link:hover { background: rgba(255,255,255,0.1); }
-        .sidebar .nav-link.active { background: rgba(255,255,255,0.2); font-weight: 600; }
-        .toast-container { z-index: 9999; }
-        .stat-card { transition: transform 0.2s; border: none; border-radius: 12px; }
-        .stat-card:hover { transform: translateY(-2px); }
-        .card { border-radius: 12px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: box-shadow 0.2s; }
-        .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .btn-loading { position: relative; pointer-events: none; color: transparent !important; }
-        .btn-loading::after { content: ''; position: absolute; width: 1rem; height: 1rem; top: 50%; left: 50%; margin: -0.5rem; border: 2px solid; border-radius: 50%; border-color: #fff #fff transparent transparent; animation: spin 0.6s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .table th { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6c757d; }
-        .page-header { padding: 1.5rem 0; }
-        .badge { font-weight: 500; padding: 0.35em 0.65em; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body>
-    <div class="d-flex" id="appLayout">
-        @auth
-        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark sidebar" id="sidebar">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <a href="{{ route('dashboard') }}" class="d-flex align-items-center text-white text-decoration-none">
-                    <i class="bi bi-building me-2 fs-4"></i>
-                    <span class="fs-5 fw-semibold">{{ config('app.name') }}</span>
+<body class="font-['Inter'] bg-slate-100 antialiased" :class="sidebarOpen ? 'overflow-hidden md:overflow-auto' : ''">
+
+    @auth
+    <div x-cloak x-show="sidebarOpen" @@click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-30 md:hidden" x-transition.opacity></div>
+
+    <aside class="fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
+
+        <div class="flex items-center justify-between px-4 h-16 border-b border-slate-700">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-white no-underline">
+                <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span class="font-semibold text-lg">{{ config('app.name') }}</span>
+            </a>
+            <button @@click="sidebarOpen = false" class="md:hidden text-slate-400 hover:text-white p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+            <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" icon="dashboard">Dashboard</x-nav-link>
+
+            @if(Auth::user()->isAdmin() || Auth::user()->isLandlord())
+            <div class="text-xs font-semibold uppercase text-slate-500 tracking-wider px-3 pt-4 pb-2">Management</div>
+            <x-nav-link href="{{ route('properties.index') }}" :active="request()->routeIs('properties.*')" icon="building">Properties</x-nav-link>
+            <x-nav-link href="{{ route('units.index') }}" :active="request()->routeIs('units.*')" icon="door">Units</x-nav-link>
+            <x-nav-link href="{{ route('tenants.index') }}" :active="request()->routeIs('tenants.*')" icon="people">Tenants</x-nav-link>
+            <x-nav-link href="{{ route('leases.index') }}" :active="request()->routeIs('leases.*')" icon="document">Leases</x-nav-link>
+            <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')" icon="users">Users</x-nav-link>
+            @endif
+
+            <div class="text-xs font-semibold uppercase text-slate-500 tracking-wider px-3 pt-4 pb-2">Finance</div>
+            <x-nav-link href="{{ route('payments.index') }}" :active="request()->routeIs('payments.*')" icon="credit-card">Payments</x-nav-link>
+
+            <div class="text-xs font-semibold uppercase text-slate-500 tracking-wider px-3 pt-4 pb-2">Services</div>
+            <x-nav-link href="{{ route('maintenance.index') }}" :active="request()->routeIs('maintenance.*')" icon="tools">Maintenance</x-nav-link>
+            <x-nav-link href="{{ route('notifications.index') }}" :active="request()->routeIs('notifications.*')" icon="bell" :badge="Auth::user()->unreadNotifications->count() > 0 ? Auth::user()->unreadNotifications->count() : null">Notifications</x-nav-link>
+        </nav>
+
+        <div class="border-t border-slate-700 p-3" x-data="{ open: false }">
+            <button @@click="open = !open" class="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-semibold">{{ substr(Auth::user()->name, 0, 1) }}</div>
+                <div class="flex-1 text-left min-w-0">
+                    <div class="text-sm font-medium truncate">{{ Auth::user()->name }}</div>
+                    <div class="text-xs text-slate-400 truncate">{{ Auth::user()->email }}</div>
+                </div>
+                <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="open" @@click.away="open = false" x-cloak x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-1" class="mt-1 py-1 bg-slate-800 rounded-lg">
+                <div class="px-3 py-2 text-xs text-slate-400">Role: {{ ucfirst(Auth::user()->role) }}</div>
+                <a href="{{ route('profile.security') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    Security
                 </a>
-                <button class="btn btn-link text-white d-md-none p-0" onclick="toggleSidebar()"><i class="bi bi-x-lg"></i></button>
-            </div>
-            <hr class="my-2">
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link text-white {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                    </a>
-                </li>
-                @if(Auth::user()->isAdmin() || Auth::user()->isLandlord())
-                <li>
-                    <a href="{{ route('properties.index') }}" class="nav-link text-white {{ request()->routeIs('properties.*') ? 'active' : '' }}">
-                        <i class="bi bi-building me-2"></i>Properties
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('units.index') }}" class="nav-link text-white {{ request()->routeIs('units.*') ? 'active' : '' }}">
-                        <i class="bi bi-door-open me-2"></i>Units
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('tenants.index') }}" class="nav-link text-white {{ request()->routeIs('tenants.*') ? 'active' : '' }}">
-                        <i class="bi bi-people me-2"></i>Tenants
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('leases.index') }}" class="nav-link text-white {{ request()->routeIs('leases.*') ? 'active' : '' }}">
-                        <i class="bi bi-file-text me-2"></i>Leases
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('users.index') }}" class="nav-link text-white {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        <i class="bi bi-people-fill me-2"></i>Users
-                    </a>
-                </li>
-                @endif
-                <li>
-                    <a href="{{ route('payments.index') }}" class="nav-link text-white {{ request()->routeIs('payments.*') ? 'active' : '' }}">
-                        <i class="bi bi-credit-card me-2"></i>Payments
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('maintenance.index') }}" class="nav-link text-white {{ request()->routeIs('maintenance.*') ? 'active' : '' }}">
-                        <i class="bi bi-tools me-2"></i>Maintenance
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('notifications.index') }}" class="nav-link text-white {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
-                        <i class="bi bi-bell me-2"></i>Notifications
-                        @if(Auth::user()->unreadNotifications->count() > 0)
-                        <span class="badge bg-danger rounded-pill ms-auto">{{ Auth::user()->unreadNotifications->count() }}</span>
-                        @endif
-                    </a>
-                </li>
-            </ul>
-            <hr class="my-2">
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
-                    <i class="bi bi-person-circle me-2 fs-5"></i>
-                    <strong class="small">{{ Auth::user()->name }}</strong>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                    <li><span class="dropdown-item-text text-muted small">{{ Auth::user()->email }}</span></li>
-                    <li><span class="dropdown-item-text text-muted small">Role: {{ ucfirst(Auth::user()->role) }}</span></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a href="{{ route('profile.security') }}" class="dropdown-item"><i class="bi bi-shield-check me-2"></i>Security</a>
-                    </li>
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2"></i>Sign out</button>
-                        </form>
-                    </li>
-                </ul>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        Sign out
+                    </button>
+                </form>
             </div>
         </div>
-        @endauth
+    </aside>
+    @endauth
 
-        <div class="flex-grow-1 main-content" @auth style="margin-left:0" @endauth>
-            @auth
-            <nav class="bg-white shadow-sm px-4 py-2 d-flex align-items-center justify-content-between d-md-none sticky-top">
-                <div>
-                    <button class="btn btn-link text-dark p-0 me-3" onclick="toggleSidebar()"><i class="bi bi-list fs-4"></i></button>
-                    <span class="fw-semibold">{{ config('app.name') }}</span>
-                </div>
-                <a href="{{ route('notifications.index') }}" class="text-dark position-relative">
-                    <i class="bi bi-bell fs-5"></i>
+    <div class="flex-1 flex flex-col min-h-screen" @auth md:ml-0 @endauth>
+        @auth
+        <header class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 md:hidden">
+            <div class="flex items-center justify-between px-4 h-14">
+                <button @@click="sidebarOpen = true" class="text-slate-600 hover:text-slate-900 p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <span class="font-semibold text-slate-900">{{ config('app.name') }}</span>
+                <a href="{{ route('notifications.index') }}" class="relative text-slate-600 hover:text-slate-900 p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                     @if(Auth::user()->unreadNotifications->count() > 0)
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">
-                        {{ Auth::user()->unreadNotifications->count() }}
-                    </span>
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ Auth::user()->unreadNotifications->count() }}</span>
                     @endif
                 </a>
-            </nav>
-            @endauth
-
-            <div class="p-4">
-                @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show d-flex align-items-center border-0 shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    <div>{{ session('success') }}</div>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
-                @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center border-0 shadow-sm" role="alert">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>
-                    <div>{{ session('error') }}</div>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
-                @if($errors->any() && !$errors->has('email') && !$errors->has('password'))
-                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
-                    <i class="bi bi-x-circle-fill me-2"></i>
-                    <strong>Please fix the following errors:</strong>
-                    <ul class="mb-0 mt-1">
-                        @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                @endif
-                @yield('content')
             </div>
-        </div>
+        </header>
+        @endauth
+
+        <main class="flex-1 p-4 md:p-6 lg:p-8">
+            @if(session('success'))
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg" role="alert">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="flex-1">{{ session('success') }}</span>
+                <button @@click="show = false" class="text-emerald-500 hover:text-emerald-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            @endif
+            @if(session('error'))
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="flex-1">{{ session('error') }}</span>
+                <button @@click="show = false" class="text-red-500 hover:text-red-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            @endif
+            @if($errors->any() && !$errors->has('email') && !$errors->has('password'))
+            <div x-data="{ show: true }" class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <strong>Please fix the following errors:</strong>
+                    <button @@click="show = !show" class="ml-auto text-red-500 hover:text-red-700">
+                        <svg class="w-4 h-4" :class="show ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                </div>
+                <ul x-show="show" class="mt-2 list-disc pl-5 text-sm">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+            @yield('content')
+        </main>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
+    @vite('resources/js/app.js')
     <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-            document.getElementById('sidebarOverlay').classList.toggle('show');
-        }
-        document.querySelectorAll('form').forEach(function(form) {
-            form.addEventListener('submit', function(e) {
-                var btn = this.querySelector('[type="submit"]');
-                if (btn && !btn.classList.contains('no-loading')) {
-                    btn.classList.add('btn-loading');
-                    btn.disabled = true;
-                }
+        document.addEventListener('alpine:init', () => {
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const btn = this.querySelector('[type="submit"]');
+                    if (btn && !btn.dataset.noLoading) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                    }
+                });
             });
         });
-        setTimeout(function() {
-            document.querySelectorAll('.alert-dismissible').forEach(function(el) {
-                var bs = new bootstrap.Alert(el);
-                setTimeout(function() { bs.close(); }, 5000);
-            });
-        }, 100);
 
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(function(reg) {
-                    reg.addEventListener('updatefound', function() {
-                        var installing = reg.installing;
-                        installing.addEventListener('statechange', function() {
-                            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-                                var toast = document.getElementById('toastContainer');
-                                if (toast) {
-                                    toast.innerHTML = '<div class="toast show align-items-center text-bg-info border-0" role="alert"><div class="d-flex"><div class="toast-body"><strong>Updated!</strong> New version available. <button class="btn btn-sm btn-light ms-2" onclick="location.reload()">Refresh</button></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>';
-                                }
-                            }
-                        });
-                    });
-                }).catch(function() {});
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
             });
         }
 
         if (!navigator.onLine) {
-            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f4f6f9;text-align:center;padding:20px;"><div><div style="width:80px;height:80px;background:#e9ecef;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#6c757d" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="#6c757d"/></svg></div><h2 class="fw-bold mb-2">You\'re Offline</h2><p class="text-muted mb-4">Please check your connection.</p><button onclick="location.reload()" class="btn btn-primary px-4 rounded-pill">Try Again</button></div></div>';
+            document.body.innerHTML = '<div class="flex items-center justify-center min-h-screen bg-slate-100 p-4"><div class="text-center max-w-sm"><div class="w-20 h-20 bg-slate-200 rounded-full inline-flex items-center justify-center mb-6"><svg class="w-10 h-10 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m-2.829-2.829a5 5 0 000-7.07m-4.243 4.243a1 1 0 010-1.414"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><h2 class="text-xl font-bold text-slate-800 mb-2">You\'re Offline</h2><p class="text-slate-500 mb-6">Please check your connection.</p><button onclick="location.reload()" class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">Try Again</button></div></div>';
         }
 
-        window.addEventListener('online', function() { location.reload(); });
-        window.addEventListener('offline', function() {
-            var c = document.getElementById('toastContainer');
-            if (c) { c.innerHTML = '<div class="toast show align-items-center text-bg-warning border-0" role="alert"><div class="d-flex"><div class="toast-body"><i class="bi bi-wifi-off me-2"></i>You are offline. Some features may be unavailable.</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>'; }
-        });
+        window.addEventListener('online', () => location.reload());
     </script>
-    @stack('scripts')
 </body>
 </html>

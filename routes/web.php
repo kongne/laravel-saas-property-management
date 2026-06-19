@@ -42,9 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::get('/two-factor/challenge', [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
-    Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->name('two-factor.verify');
+    Route::post('/two-factor/verify', [TwoFactorController::class, 'verify'])->name('two-factor.verify')->middleware('throttle:5,5');
     Route::get('/two-factor/recovery', [TwoFactorController::class, 'recovery'])->name('two-factor.recovery');
-    Route::post('/two-factor/recovery/verify', [TwoFactorController::class, 'verifyRecovery'])->name('two-factor.recovery.verify');
+    Route::post('/two-factor/recovery/verify', [TwoFactorController::class, 'verifyRecovery'])->name('two-factor.recovery.verify')->middleware('throttle:3,30');
 
     Route::middleware('two-factor')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

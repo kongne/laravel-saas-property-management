@@ -5,73 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }} - Two-Factor Authentication</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f4f6f9 0%, #e9ecef 100%); min-height: 100vh; display: flex; align-items: center; }
-        .auth-card { border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); max-width: 440px; margin: 0 auto; }
-        .auth-body { padding: 2.5rem; }
-        .code-input { width: 100%; text-align: center; font-size: 2rem; font-weight: 700; letter-spacing: 12px; padding: 16px; border-radius: 12px; border: 2px solid #e9ecef; font-family: 'Courier New', monospace; }
-        .code-input:focus { border-color: #0d6efd; box-shadow: 0 0 0 4px rgba(13,110,253,0.1); }
-        .brand-icon { width: 48px; height: 48px; background: #0d6efd; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; }
+        .code-input { width: 100%; text-align: center; font-size: 2rem; font-weight: 700; letter-spacing: 12px; padding: 16px; border-radius: 12px; border: 2px solid #e2e8f0; font-family: 'Courier New', monospace; }
+        .code-input:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-center">
+            <div class="w-full max-w-md">
                 <div class="text-center mb-4">
-                    <a href="/" class="text-decoration-none">
-                        <div class="d-inline-flex align-items-center gap-2">
-                            <div class="brand-icon"><i class="bi bi-building fs-4 text-white"></i></div>
-                            <span class="fs-4 fw-bold text-dark">{{ config('app.name') }}</span>
+                    <a href="/" class="no-underline">
+                        <div class="inline-flex items-center gap-2">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-xl inline-flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                </svg>
+                            </div>
+                            <span class="text-2xl font-bold text-slate-900">{{ config('app.name') }}</span>
                         </div>
                     </a>
                 </div>
-                <div class="card auth-card">
-                    <div class="auth-body">
-                        <div class="text-center mb-4">
-                            <div class="bg-primary bg-opacity-10 rounded-3 d-inline-flex p-3 mb-3">
-                                <i class="bi bi-shield-lock fs-2 text-primary"></i>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200" style="max-width: 440px; margin: 0 auto;">
+                    <div class="p-8">
+                        <div class="text-center mb-5">
+                            <div class="bg-indigo-50 rounded-xl inline-flex p-3 mb-3">
+                                <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
                             </div>
-                            <h4 class="fw-bold mb-1">Two-Factor Authentication</h4>
-                            <p class="text-muted small mb-0">Enter the 6-digit code sent to your email</p>
+                            <h4 class="font-bold text-xl text-slate-800 mb-1">Two-Factor Authentication</h4>
+                            <p class="text-slate-500 text-sm">Enter the 6-digit code sent to your email</p>
                         </div>
 
                         <form method="POST" action="{{ route('two-factor.verify') }}">
                             @csrf
-                            <div class="mb-4">
-                                <input type="text" class="form-control code-input @error('code') is-invalid @enderror" id="code" name="code" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" autofocus required>
+                            <div class="mb-5">
+                                <input type="text" class="code-input w-full text-center text-3xl font-bold tracking-widest px-4 py-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 @error('code') border-red-300 @enderror" id="code" name="code" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" autofocus required>
                                 @error('code')
-                                    <div class="invalid-feedback text-center">{{ $message }}</div>
+                                    <p class="mt-2 text-sm text-red-600 text-center">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold" style="border-radius: 12px;">
-                                <i class="bi bi-shield-check me-2"></i>Verify Code
+                            <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-3.5 rounded-xl hover:bg-indigo-700 transition-colors font-semibold flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                                Verify Code
                             </button>
                         </form>
 
-                        <div class="text-center mt-4">
-                            <p class="text-muted small mb-2">Didn't receive the code?</p>
-                            <a href="{{ route('two-factor.challenge') }}" class="btn btn-outline-secondary btn-sm px-4" style="border-radius: 50px;">
-                                <i class="bi bi-arrow-clockwise me-1"></i>Resend Code
+                        <div class="text-center mt-5">
+                            <p class="text-slate-500 text-sm mb-2">Didn't receive the code?</p>
+                            <a href="{{ route('two-factor.challenge') }}" class="border border-slate-300 text-slate-600 px-4 py-2 rounded-full hover:bg-slate-50 transition-colors font-medium text-sm inline-flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Resend Code
                             </a>
                         </div>
 
                         <div class="text-center mt-3">
-                            <a href="{{ route('two-factor.recovery') }}" class="text-decoration-none small">
-                                <i class="bi bi-key me-1"></i>Use a recovery code
+                            <a href="{{ route('two-factor.recovery') }}" class="text-indigo-600 hover:text-indigo-800 underline text-sm inline-flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                                </svg>
+                                Use a recovery code
                             </a>
                         </div>
 
-                        <hr class="my-4">
+                        <hr class="my-5 border-slate-200">
                         <div class="text-center">
-                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            <form action="{{ route('logout') }}" method="POST" class="inline">
                                 @csrf
-                                <button type="submit" class="btn btn-link text-muted text-decoration-none small">
-                                    <i class="bi bi-box-arrow-left me-1"></i>Cancel and sign out
+                                <button type="submit" class="text-slate-500 hover:text-slate-700 underline text-sm inline-flex items-center gap-1 bg-transparent border-0 p-0 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                    Cancel and sign out
                                 </button>
                             </form>
                         </div>
@@ -80,10 +94,9 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('code')?.addEventListener('input', function(e) { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
-        document.querySelectorAll('form').forEach(function(f) { f.addEventListener('submit', function(e) { var btn = this.querySelector('[type="submit"]'); if(btn) { btn.classList.add('btn-loading'); btn.disabled = true; } }); });
+        document.querySelectorAll('form').forEach(function(f) { f.addEventListener('submit', function(e) { var btn = this.querySelector('[type="submit"]'); if(btn) { btn.classList.add('opacity-75', 'cursor-not-allowed'); btn.disabled = true; } }); });
     </script>
 </body>
 </html>
